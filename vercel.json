@@ -1,8 +1,5 @@
 {
   "version": 2,
-  "builds": [],
-  "functions": {},
-  "routes": [],
   "env": {
     "NODE_VERSION": "18"
   }
