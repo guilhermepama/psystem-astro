@@ -1,5 +1,6 @@
 {
   "name": "astro-supabase",
+  "packageManager": "pnpm@10.6.1",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -26,3 +27,4 @@
     "prettier-plugin-astro": "^0.12.2"
   }
 }
+
