@@ -1,6 +1,13 @@
 {
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/pages/**/*.astro",
+      "use": "@vercel/node@2.0.0"
+    }
+  ],
   "functions": {
-    "render": {
+    "api/**/*": {
       "runtime": "nodejs18.x"
     }
   }
