@@ -3,10 +3,11 @@ import vercel from "@astrojs/vercel/serverless";
 import tailwind from "@astrojs/tailwind";
 import solidJs from "@astrojs/solid-js";
 
-// https://astro.build/config
 export default defineConfig({
-  site: "https://astro-supabase-auth.vercel.app",
+  site: "",
   output: "server",
-  adapter: vercel(),
-  integrations: [tailwind(), solidJs()],
+  adapter: vercel({
+    runtime: "nodejs18.x" // ✅ Define Node.js 18 explicitamente
+  }),
+  integrations: [tailwind(), solidJs()]
 });
