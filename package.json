@@ -3,6 +3,9 @@
   "packageManager": "pnpm@10.6.1",
   "type": "module",
   "version": "0.0.1",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -27,4 +30,3 @@
     "prettier-plugin-astro": "^0.12.2"
   }
 }
-
