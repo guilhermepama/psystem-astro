@@ -1,31 +1,50 @@
 ---
 import Base from "../layout/Base.astro";
 import { supabase } from "../lib/supabase";
-import { Reviews, type GuestbookEntry } from "../components/Reviews";
 
-const { email } = Astro.locals;
+// Pegando o email do Astro.locals (usuário autenticado)
+const { email, id } = Astro.locals;
 
-const { data } = (await supabase
-  .from("guestbook")
-  .select("name, message")
-  .order("created_at", { ascending: false })) as { data: GuestbookEntry[] };
+// Defina o ID do especialista que deseja buscar (pode vir de autenticação ou de outra fonte)
+const especialistaId = id;
+
+// Consulta para obter os dados do especialista do schema "clinica"
+const { data, error } = await supabase
+  .schema("clinica")
+  .from("especialista")
+  .select("nome, sobrenome")
+  .eq("id", especialistaId)
+  .single();
+
+if (error) {
+  console.error("Erro ao buscar especialista:", error);
+}
 ---
-
 <Base title="Dashboard">
   <section class="py-24 px-4 w-full flex flex-col items-center gap-2">
-    <p
-      class="max-w-prose text-xl text-indigo-600 dark:text-indigo-400 font-semibold"
-    >
+    <p class="max-w-prose text-xl text-indigo-600 dark:text-indigo-400 font-semibold">
       {email}
     </p>
-    <p class="max-w-prose text-lg mb-2 dark:text-zinc-100">
-      This is a protected page. You can only see this if you are logged in.
-    </p>
+    <a
+      href="/dashboard/clientes"
+      class="mb-10 bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 px-3 py-1 rounded-md"
+    >
+      Clientes
+    </a>
     <a
       href="/api/auth/signout"
       class="mb-10 bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 px-3 py-1 rounded-md"
-      >Sign out</a
     >
-    <Reviews reviews={data} client:idle />
+      Sair
+    </a>
+    {data ? (
+      <div class="w-full max-w-prose bg-zinc-100 dark:bg-zinc-900 p-4 rounded-md">
+        <p class="text-lg">Nome: {data.nome}</p>
+        <p class="text-lg">Sobrenome: {data.sobrenome}</p>
+        <p class="text-lg">E-mail: {email}</p>
+      </div>
+    ) : (
+      <p>Nenhum especialista encontrado</p>
+    )}
   </section>
 </Base>

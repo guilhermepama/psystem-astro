@@ -1,0 +1,60 @@
+---
+// app/(protected)/dashboard/cliente/[id]/page.astro
+import Base from "../../../../layout/Base.astro";
+import { supabase } from "../../../../lib/supabase";
+
+// O id do cliente vem da URL
+console.log("Astro.params:", Astro.params);
+const { id } = Astro.params;
+
+const { data: cliente, error } = await supabase
+  .schema("clinica")
+  .from("cliente")
+  .select(`
+    id,
+    nome,
+    sobrenome,
+    email,
+    telefone,
+    data_nascimento,
+    cpf,
+    profissao,
+    endereco,
+    bairro,
+    cep,
+    cidade,
+    estado,
+    contato_emergencia,
+    telefone_emergencia
+  `)
+  .eq("id", id)
+  .single();
+
+if (error) {
+  console.error("Erro ao buscar detalhes do cliente:", error);
+}
+---
+<Base title="Detalhes do Cliente">
+  <section class="py-24 px-4">
+    {cliente ? (
+      <div class="max-w-prose mx-auto bg-zinc-100 dark:bg-zinc-900 p-4 rounded-md">
+        <h1 class="text-2xl font-bold mb-4">Detalhes do Cliente</h1>
+        <p><strong>Nome:</strong> {cliente.nome} {cliente.sobrenome}</p>
+        <p><strong>E-mail:</strong> {cliente.email}</p>
+        <p><strong>Telefone:</strong> {cliente.telefone}</p>
+        <p><strong>Data de Nascimento:</strong> {cliente.data_nascimento}</p>
+        <p><strong>CPF:</strong> {cliente.cpf}</p>
+        <p><strong>Profissão:</strong> {cliente.profissao}</p>
+        <p><strong>Endereço:</strong> {cliente.endereco}</p>
+        <p><strong>Bairro:</strong> {cliente.bairro}</p>
+        <p><strong>CEP:</strong> {cliente.cep}</p>
+        <p><strong>Cidade:</strong> {cliente.cidade}</p>
+        <p><strong>Estado:</strong> {cliente.estado}</p>
+        <p><strong>Contato de Emergência:</strong> {cliente.contato_emergencia}</p>
+        <p><strong>Telefone de Emergência:</strong> {cliente.telefone_emergencia}</p>
+      </div>
+    ) : (
+      <p>Detalhes do cliente não encontrados.</p>
+    )}
+  </section>
+</Base>
