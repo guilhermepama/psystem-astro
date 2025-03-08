@@ -1,5 +1,5 @@
 ---
-import Base from "../../layout/Base.astro";
+import BaseDashboard from "../../layout/BaseDashboard.astro";
 import { supabase } from "../../lib/supabase";
 
 const { id } = Astro.locals;
@@ -16,7 +16,7 @@ if (error) {
   console.error("Erro ao buscar clientes:", error);
 }
 ---
-<Base title="Lista de Clientes do Especialista">
+<BaseDashboard title="Lista de Clientes do Especialista">
   <section class="py-24 px-4 w-full flex flex-col items-center gap-2">
     <h1 class="text-2xl font-bold">Clientes do Especialista</h1>
     {data ? (

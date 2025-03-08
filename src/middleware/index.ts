@@ -30,7 +30,7 @@ export const onRequest = defineMiddleware(
         });
         return redirect("/signin");
       }
-
+      
       locals.email = data.user?.email!;
       locals.id = data.user?.id!;
       cookies.set("sb-access-token", data?.session?.access_token!, {

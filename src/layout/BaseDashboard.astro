@@ -1,5 +1,5 @@
 ---
-import HeaderLp from "@/components/header-lp.astro";
+import Header from "@/components/header-dashboard.astro";
 
 interface Props {
   title: string;
@@ -31,7 +31,7 @@ const canonicalURL = new URL(Astro.url).href;
   <body
     class="flex flex-col h-full w-full dark:bg-zinc-900 bg-zinc-50 dark:text-zinc-100"
   >
-     <HeaderLp />
+     <Header />
     <slot />
   </body>
 </html>

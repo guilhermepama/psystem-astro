@@ -1,7 +1,6 @@
 ---
-import Base from "../layout/Base.astro";
+import BaseDashboard from "../layout/BaseDashboard.astro";
 import { supabase } from "../lib/supabase";
-import { Button } from "@/components/ui/button"
 
 // Pegando o email do Astro.locals (usuário autenticado)
 const { email, id } = Astro.locals;
@@ -21,27 +20,12 @@ if (error) {
   console.error("Erro ao buscar especialista:", error);
 }
 ---
-<Base title="Dashboard">
+<BaseDashboard title="Dashboard">
   <section class="py-24 px-4 w-full flex flex-col items-center gap-2">
     <p class="max-w-prose text-xl text-indigo-600 dark:text-indigo-400 font-semibold">
       {email}
     </p>
-    <Button>Teste</Button>
-    <a
-      href="/dashboard/consultas"
-      class="mb-10 bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 px-3 py-1 rounded-md"
-    <a
-      href="/dashboard/clientes"
-      class="mb-10 bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 px-3 py-1 rounded-md"
-    >
-      Clientes
-    </a>
-    <a
-      href="/api/auth/signout"
-      class="mb-10 bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 px-3 py-1 rounded-md"
-    >
-      Sair
-    </a>
+ 
     {data ? (
       <div class="w-full max-w-prose bg-zinc-100 dark:bg-zinc-900 p-4 rounded-md">
         <p class="text-lg">Nome: {data.nome}</p>
