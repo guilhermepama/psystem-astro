@@ -1,6 +1,7 @@
 ---
 import Base from "../layout/Base.astro";
 import { supabase } from "../lib/supabase";
+import { Button } from "@/components/ui/button"
 
 // Pegando o email do Astro.locals (usuário autenticado)
 const { email, id } = Astro.locals;
@@ -25,6 +26,10 @@ if (error) {
     <p class="max-w-prose text-xl text-indigo-600 dark:text-indigo-400 font-semibold">
       {email}
     </p>
+    <Button>Teste</Button>
+    <a
+      href="/dashboard/consultas"
+      class="mb-10 bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 px-3 py-1 rounded-md"
     <a
       href="/dashboard/clientes"
       class="mb-10 bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 px-3 py-1 rounded-md"
