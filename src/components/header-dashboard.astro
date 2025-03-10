@@ -1,38 +1,115 @@
 ---
 import LogoT4P from "../brand/logoT4P.astro";
 import { buttonVariants } from "@/components/ui/button";
+
+const { email } = Astro.locals;
 ---
 
-<header
-  class="sticky top-0 z-50 w-full bg-background/95 supports-[backdrop-filter]:bg-background/60 border-b backdrop-blur"
->
-  <nav class="flex items-center justify-between px-4 py-3 bg-white dark:bg-zinc-800 dark:border-zinc-700">
-    <!-- Marca / Logo -->
-    <a href="/dashboard" class="hidden font-semibold dark:text-white">
-      <LogoT4P />
-    </a>
+<!-- Cabeçalho fixo no topo -->
+<header class="sticky top-0 z-50 w-full bg-white/95 dark:bg-zinc-800/95 border-b dark:border-zinc-700 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+  <!-- Barra de navegação -->
+  <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-0">
+    <div class="flex h-16 items-center justify-between">
+      <!-- Esquerda: Logo + Marca -->
+      <div class="flex items-center text-xl">
+        <a href="/dashboard" class=" text-zinc-900 dark:text-white">
+          <LogoT4P />
+        </a>
+      </div>
 
-    <!-- Links -->
-    <ul class="flex items-center gap-8 font-medium">
-      <li>
-        <a href="/dashboard" class="text-zinc-900 dark:text-gray-200">
+      <!-- Direita: Menu Desktop (MD+) -->
+      <div class="hidden md:flex items-center gap-6">
+
+        <a href="/dashboard" class="text-zinc-900 dark:text-gray-200 hover:text-primary">
           Dashboard
         </a>
-      </li>
-      <li>
-        <a href="/dashboard/clientes" class="text-zinc-900 dark:text-gray-200">
-          Clientes
+        <a href="/dashboard/clientes" class="text-zinc-900 dark:text-gray-200  hover:text-primary">
+          Pacientes
+        
         </a>
-      </li>
-      <li>
+        <a href="/dashboard/clientes" class="text-zinc-900 dark:text-gray-200  hover:text-primary">
+          Agenda
+        </a>
+        <a href="/dashboard/clientes" class="text-zinc-900 dark:text-gray-200  hover:text-primary">
+          Pagamentos
+        </a>
+        <p class="max-w-prose text-md text-indigo-600 dark:text-indigo-400 font-semibold">
+          {email}
+        </p>
         <a
+          href="/api/auth/signout"
+          class={buttonVariants({ variant: "outline" })}
+        >
+          Sair
+        </a>
+      </div>
+
+      <!-- Botão do menu mobile (visível somente em telas < MD) -->
+      <div class="flex md:hidden">
+        <button
+          id="mobile-menu-button"
+          type="button"
+          class="inline-flex items-center justify-center p-2 text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700 focus:outline-none"
+        >
+          <!-- Ícone do menu aberto -->
+          <svg
+            id="icon-menu"
+            class="block h-6 w-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <!-- Ícone do menu fechado -->
+          <svg
+            id="icon-close"
+            class="hidden h-6 w-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Menu mobile (dropdown), aparece quando clicamos no botão -->
+  <div id="mobile-menu" class="md:hidden hidden bg-white dark:bg-zinc-800 border-t dark:border-zinc-700">
+    <div class="p-4 flex flex-col gap-4">
+      <p class="max-w-prose text-xl text-indigo-600 dark:text-indigo-400 font-semibold">
+        {email}
+      </p>
+      <a href="/dashboard" class="text-zinc-900 dark:text-gray-200 hover:underline">
+        Dashboard
+      </a>
+      <a href="/dashboard/clientes" class="text-zinc-900 dark:text-gray-200 hover:underline">
+        Clientes
+      </a>
+      <a
         href="/api/auth/signout"
         class={buttonVariants({ variant: "outline" })}
       >
         Sair
       </a>
-      </li>
-    </ul>
-  </nav>
+    </div>
+  </div>
 </header>
 
+<!-- Script inline para controlar o menu mobile -->
+<script is:inline>
+  const mobileMenuButton = document.getElementById("mobile-menu-button");
+  const mobileMenu = document.getElementById("mobile-menu");
+  const iconMenu = document.getElementById("icon-menu");
+  const iconClose = document.getElementById("icon-close");
+
+  mobileMenuButton.addEventListener("click", () => {
+    // Exibe/esconde o dropdown
+    mobileMenu.classList.toggle("hidden");
+    // Alterna os ícones de menu
+    iconMenu.classList.toggle("hidden");
+    iconClose.classList.toggle("hidden");
+  });
+</script>

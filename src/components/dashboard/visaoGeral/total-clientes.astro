@@ -1,0 +1,30 @@
+---
+import VisaoGeral from '../../../components/VisaoGeral.jsx';
+import { supabase } from "../../../lib/supabase";
+
+// Recupera o id do especialista (por exemplo, via Astro.locals ou de outro modo)
+const especialistaId = Astro.locals.id;
+
+// Consulta na tabela "relacoes" do schema "clinica"
+const { data, error } = await supabase
+  .schema("clinica")
+  .from("relacoes")
+  .select("cliente(id)")
+  .eq("espec_id", especialistaId);
+
+if (error) {
+  console.error("Erro ao buscar clientes:", error);
+}
+
+// Se houver dados, calcula a quantidade de clientes; caso contrário, define 0
+const totalClientes = data ? data.length : 0;
+---
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Visão Geral</title>
+  </head>
+  <body>
+    <VisaoGeral totalClientes={totalClientes} />
+  </body>
+</html>

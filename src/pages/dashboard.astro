@@ -1,9 +1,10 @@
 ---
 import BaseDashboard from "../layout/BaseDashboard.astro";
 import { supabase } from "../lib/supabase";
+import VisaoGeral from '../components/VisaoGeral.jsx';
 
 // Pegando o email do Astro.locals (usuário autenticado)
-const { email, id } = Astro.locals;
+const { id } = Astro.locals;
 
 // Defina o ID do especialista que deseja buscar (pode vir de autenticação ou de outra fonte)
 const especialistaId = id;
@@ -21,12 +22,9 @@ if (error) {
 }
 ---
 <BaseDashboard title="Dashboard">
-  <section class="py-24 px-4 w-full flex flex-col items-center gap-2">
-    <p class="max-w-prose text-xl text-indigo-600 dark:text-indigo-400 font-semibold">
-      {email}
-    </p>
- 
-    {data ? (
+  <section class="w-full flex flex-col gap-2">
+    
+    <!-- {data ? (
       <div class="w-full max-w-prose bg-zinc-100 dark:bg-zinc-900 p-4 rounded-md">
         <p class="text-lg">Nome: {data.nome}</p>
         <p class="text-lg">Sobrenome: {data.sobrenome}</p>
@@ -34,6 +32,7 @@ if (error) {
       </div>
     ) : (
       <p>Nenhum especialista encontrado</p>
-    )}
+    )} -->
+    <VisaoGeral />
   </section>
 </Base>
