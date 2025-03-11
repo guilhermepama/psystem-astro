@@ -1,0 +1,207 @@
+---
+import { supabase } from "../lib/supabase";
+
+if (Astro.request.method === "POST") {
+  const formData = await Astro.request.formData();
+
+  // Dados pessoais (para a tabela clientes.dados_cliente)
+  const nome = formData.get("nome")?.toString() ?? "";
+  const sobrenome = formData.get("sobrenome")?.toString() ?? "";
+  const email = formData.get("email")?.toString() ?? "";
+  const telefone = formData.get("telefone")?.toString() ?? "";
+  const data_nascimento = formData.get("data_nascimento")?.toString() ?? "";
+
+  // Insere dados pessoais na tabela clientes.dados_cliente
+  const { data: dadosCliente, error: erroCliente } = await supabase
+    .schema("clinica")
+    .from("cliente")
+    .insert({
+      nome,
+      sobrenome,
+      email,
+      telefone,
+      data_nascimento,
+    })
+    .select("id")
+    .single();
+
+  if (erroCliente) {
+    console.error("Erro ao cadastrar dados pessoais:", erroCliente);
+    return new Response(
+      JSON.stringify({ error: "Erro ao cadastrar dados pessoais" }),
+      { status: 500 }
+    );
+  }
+
+  const cliente_id = dadosCliente.id;
+
+  // Dados do questionário (para a tabela clientes.formulario)
+  const diagnostico_medico = formData.get("diagnostico_medico")?.toString() ?? "";
+  const ja_fez_tratamento = formData.get("ja_fez_tratamento")?.toString() ?? "";
+  const uso_medicacoes = formData.get("uso_medicacoes")?.toString() ?? "";
+  const historico_familiar = formData.get("historico_familiar")?.toString() ?? "";
+  const condicao_medica = formData.get("condicao_medica")?.toString() ?? "";
+  const historico_substancias = formData.get("historico_substancias")?.toString() ?? "";
+  const motivacao_atendimento = formData.get("motivacao_atendimento")?.toString() ?? "";
+  const experiencia_terapia = formData.get("experiencia_terapia")?.toString() ?? "";
+  const expectativas = formData.get("expectativas")?.toString() ?? "";
+  const metafora_vida = formData.get("metafora_vida")?.toString() ?? "";
+  const sonhos_experiencias = formData.get("sonhos_experiencias")?.toString() ?? "";
+  const desafios_atuais = formData.get("desafios_atuais")?.toString() ?? "";
+  const lidar_emocoes = formData.get("lidar_emocoes")?.toString() ?? "";
+  const sentido_vida = formData.get("sentido_vida")?.toString() ?? "";
+  const alteracao_consciencia = formData.get("alteracao_consciencia")?.toString() ?? "";
+
+  // Insere os dados do formulário na tabela clientes.formulario
+  const { data: formularioData, error: erroFormulario } = await supabase
+    .schema("clientes")
+    .from("formulario")
+    .insert({
+      cliente_id,
+      diagnostico_medico,
+      ja_fez_tratamento,
+      uso_medicacoes,
+      historico_familiar,
+      condicao_medica,
+      historico_substancias,
+      motivacao_atendimento,
+      experiencia_terapia,
+      expectativas,
+      metafora_vida,
+      sonhos_experiencias,
+      desafios_atuais,
+      lidar_emocoes,
+      sentido_vida,
+      alteracao_consciencia,
+    })
+    .select("*")
+    .single();
+
+  if (erroFormulario) {
+    console.error("Erro ao cadastrar questionário:", erroFormulario);
+    return new Response(
+      JSON.stringify({ error: "Erro ao cadastrar questionário" }),
+      { status: 500 }
+    );
+  }
+
+  // Redireciona para uma página de sucesso (crie essa rota se necessário)
+  return Astro.redirect("/cadastro/sucesso");
+}
+---
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Cadastro e Questionário do Paciente</title>
+    <!-- Se estiver usando Tailwind, inclua o CSS apropriado -->
+    <link rel="stylesheet" href="/dist/tailwind.css" />
+  </head>
+  <body class="bg-gray-100 dark:bg-gray-900 min-h-screen text-gray-800 dark:text-gray-100">
+    <div class="max-w-4xl mx-auto p-6 bg-white dark:bg-gray-800 rounded shadow mt-10">
+      <h1 class="text-3xl font-bold mb-6 text-center">Cadastro e Questionário do Paciente</h1>
+      <form method="POST" class="space-y-6">
+        <!-- Dados Pessoais -->
+        <fieldset class="border p-4 rounded">
+          <legend class="text-xl font-semibold mb-2">Dados Pessoais</legend>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="nome" class="block font-medium mb-1">Nome Completo</label>
+              <input type="text" id="nome" name="nome" required class="w-full border rounded p-2" />
+            </div>
+            <div>
+              <label for="sobrenome" class="block font-medium mb-1">Sobrenome</label>
+              <input type="text" id="sobrenome" name="sobrenome" required class="w-full border rounded p-2" />
+            </div>
+            <div>
+              <label for="email" class="block font-medium mb-1">E-mail</label>
+              <input type="email" id="email" name="email" required class="w-full border rounded p-2" />
+            </div>
+            <div>
+              <label for="telefone" class="block font-medium mb-1">Telefone / WhatsApp</label>
+              <input type="text" id="telefone" name="telefone" required class="w-full border rounded p-2" />
+            </div>
+            <div class="md:col-span-2">
+              <label for="data_nascimento" class="block font-medium mb-1">Data de Nascimento</label>
+              <input type="date" id="data_nascimento" name="data_nascimento" required class="w-full border rounded p-2" />
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Questionário / Histórico Clínico -->
+        <fieldset class="border p-4 rounded">
+          <legend class="text-xl font-semibold mb-2">Histórico Clínico e Questionário</legend>
+          <div class="space-y-4">
+            <div>
+              <label for="diagnostico_medico" class="block font-medium mb-1">Diagnóstico médico ou psiquiátrico (se houver)</label>
+              <textarea id="diagnostico_medico" name="diagnostico_medico" rows="3" class="w-full border rounded p-2"></textarea>
+            </div>
+            <div>
+              <label for="ja_fez_tratamento" class="block font-medium mb-1">Já realizou ou está realizando tratamento psicológico ou psiquiátrico?</label>
+              <textarea id="ja_fez_tratamento" name="ja_fez_tratamento" rows="2" class="w-full border rounded p-2"></textarea>
+            </div>
+            <div>
+              <label for="uso_medicacoes" class="block font-medium mb-1">Faz uso de medicações psiquiátricas? Se sim, quais, dosagem e duração.</label>
+              <textarea id="uso_medicacoes" name="uso_medicacoes" rows="2" class="w-full border rounded p-2"></textarea>
+            </div>
+            <div>
+              <label for="historico_familiar" class="block font-medium mb-1">Tem histórico de transtornos psicológicos na família?</label>
+              <textarea id="historico_familiar" name="historico_familiar" rows="2" class="w-full border rounded p-2"></textarea>
+            </div>
+            <div>
+              <label for="condicao_medica" class="block font-medium mb-1">Apresenta alguma condição médica relevante (ex: hipertensão, diabetes, etc.)?</label>
+              <textarea id="condicao_medica" name="condicao_medica" rows="2" class="w-full border rounded p-2"></textarea>
+            </div>
+            <div>
+              <label for="historico_substancias" class="block font-medium mb-1">Tem histórico de uso de substâncias psicoativas? Se sim, quais e frequência.</label>
+              <textarea id="historico_substancias" name="historico_substancias" rows="2" class="w-full border rounded p-2"></textarea>
+            </div>
+            <div>
+              <label for="motivacao_atendimento" class="block font-medium mb-1">O que te motivou a buscar atendimento psicológico?</label>
+              <textarea id="motivacao_atendimento" name="motivacao_atendimento" rows="2" class="w-full border rounded p-2"></textarea>
+            </div>
+            <div>
+              <label for="experiencia_terapia" class="block font-medium mb-1">Você já fez terapia antes? Como foi essa experiência?</label>
+              <textarea id="experiencia_terapia" name="experiencia_terapia" rows="2" class="w-full border rounded p-2"></textarea>
+            </div>
+            <div>
+              <label for="expectativas" class="block font-medium mb-1">Quais são suas principais expectativas para este processo terapêutico?</label>
+              <textarea id="expectativas" name="expectativas" rows="2" class="w-full border rounded p-2"></textarea>
+            </div>
+            <div>
+              <label for="metafora_vida" class="block font-medium mb-1">Se tivesse que descrever sua vida em uma metáfora ou imagem, qual seria?</label>
+              <textarea id="metafora_vida" name="metafora_vida" rows="2" class="w-full border rounded p-2"></textarea>
+            </div>
+            <div>
+              <label for="sonhos_experiencias" class="block font-medium mb-1">Existe algum sonho ou experiência marcante que você gostaria de compartilhar?</label>
+              <textarea id="sonhos_experiencias" name="sonhos_experiencias" rows="2" class="w-full border rounded p-2"></textarea>
+            </div>
+            <div>
+              <label for="desafios_atuais" class="block font-medium mb-1">Quais são os principais desafios que você sente estar enfrentando na sua vida agora?</label>
+              <textarea id="desafios_atuais" name="desafios_atuais" rows="2" class="w-full border rounded p-2"></textarea>
+            </div>
+            <div>
+              <label for="lidar_emocoes" class="block font-medium mb-1">Como você lida com suas emoções e conflitos internos?</label>
+              <textarea id="lidar_emocoes" name="lidar_emocoes" rows="2" class="w-full border rounded p-2"></textarea>
+            </div>
+            <div>
+              <label for="sentido_vida" class="block font-medium mb-1">Qual o sentido ou propósito que você busca para sua vida?</label>
+              <textarea id="sentido_vida" name="sentido_vida" rows="2" class="w-full border rounded p-2"></textarea>
+            </div>
+            <div>
+              <label for="alteracao_consciencia" class="block font-medium mb-1">Você já teve alguma experiência significativa de alteração de consciência? Se sim, descreva.</label>
+              <textarea id="alteracao_consciencia" name="alteracao_consciencia" rows="2" class="w-full border rounded p-2"></textarea>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Botão de Envio -->
+        <div>
+          <button type="submit" class="w-full py-3 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition-colors">
+            Enviar Cadastro
+          </button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

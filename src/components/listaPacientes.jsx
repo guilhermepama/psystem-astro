@@ -21,7 +21,7 @@ const ClientList = ({ clientes }) => {
           return (
             <li
               key={client.id}
-              className="p-6 bg-white dark:bg-gray-800 rounded-md shadow hover:shadow-lg transition-shadow"
+              className="p-6 bg-white dark:bg-gray-800 rounded-md shadow hover:shadow-lg transition-all  hover:scale-105"
             >
               <a href={`/dashboard/cliente/${client.id}`} className="block">
                 <div className="mb-4">
