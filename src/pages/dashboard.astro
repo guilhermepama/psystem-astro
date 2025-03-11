@@ -1,38 +1,33 @@
 ---
 import BaseDashboard from "../layout/BaseDashboard.astro";
 import { supabase } from "../lib/supabase";
-import VisaoGeral from '../components/VisaoGeral.jsx';
+import VisaoGeral from '../components/VisaoGeral.tsx';
 
-// Pegando o email do Astro.locals (usuário autenticado)
+// Pegando o ID do especialista a partir de Astro.locals
 const { id } = Astro.locals;
-
-// Defina o ID do especialista que deseja buscar (pode vir de autenticação ou de outra fonte)
 const especialistaId = id;
 
-// Consulta para obter os dados do especialista do schema "clinica"
-const { data, error } = await supabase
-  .schema("clinica")
-  .from("especialista")
-  .select("nome, sobrenome")
-  .eq("id", especialistaId)
-  .single();
 
-if (error) {
-  console.error("Erro ao buscar especialista:", error);
+
+// Consulta para obter os dados dos clientes (relacionados ao especialista) do schema "clinica"
+const { data: relacoesData, error: relacoesError } = await supabase
+  .schema("clinica")
+  .from("relacoes")
+  .select("cliente(id)")
+  .eq("espec_id", especialistaId);
+
+if (relacoesError) {
+  console.error("Erro ao buscar clientes:", relacoesError);
 }
+
+// Como essa consulta retorna um array, podemos usar .length
+const totalClientes = relacoesData ? relacoesData.length : 0;
+// console.log("Total de clientes:", totalClientes);
 ---
-<BaseDashboard title="Psystem | Dashboard">
+<BaseDashboard title="Dashboard">
   <section class="w-full flex flex-col gap-2">
     
-    <!-- {data ? (
-      <div class="w-full max-w-prose bg-zinc-100 dark:bg-zinc-900 p-4 rounded-md">
-        <p class="text-lg">Nome: {data.nome}</p>
-        <p class="text-lg">Sobrenome: {data.sobrenome}</p>
-        <p class="text-lg">E-mail: {email}</p>
-      </div>
-    ) : (
-      <p>Nenhum especialista encontrado</p>
-    )} -->
-    <VisaoGeral />
+    <!-- Renderiza o componente React, passando totalClientes -->
+    <VisaoGeral client:only="react" totalClientes={totalClientes} />
   </section>
-</Base>
+</BaseDashboard>
