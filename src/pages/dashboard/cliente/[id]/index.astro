@@ -2,8 +2,7 @@
 import Base from "../../../../layout/BaseDashboard.astro";
 import { supabase } from "../../../../lib/supabase";
 
-// O id do cliente vem da URL
-console.log("Astro.params:", Astro.params);
+// O ID do cliente vem da URL
 const { id } = Astro.params;
 
 const { data: cliente, error } = await supabase
@@ -34,26 +33,81 @@ if (error) {
 }
 ---
 <Base title="Detalhes do Cliente">
-  <section class="py-24 px-4">
+  <section class="py-24 px-4 min-h-screen dark:bg-gray-900 ">
+    
     {cliente ? (
-      <div class="max-w-prose mx-auto bg-zinc-100 dark:bg-zinc-900 p-4 rounded-md">
-        <h1 class="text-2xl font-bold mb-4">Detalhes do Cliente</h1>
-        <p><strong>Nome:</strong> {cliente.nome} {cliente.sobrenome}</p>
-        <p><strong>E-mail:</strong> {cliente.email}</p>
-        <p><strong>Telefone:</strong> {cliente.telefone}</p>
-        <p><strong>Data de Nascimento:</strong> {cliente.data_nascimento}</p>
-        <p><strong>CPF:</strong> {cliente.cpf}</p>
-        <p><strong>Profissão:</strong> {cliente.profissao}</p>
-        <p><strong>Endereço:</strong> {cliente.endereco}</p>
-        <p><strong>Bairro:</strong> {cliente.bairro}</p>
-        <p><strong>CEP:</strong> {cliente.cep}</p>
-        <p><strong>Cidade:</strong> {cliente.cidade}</p>
-        <p><strong>Estado:</strong> {cliente.estado}</p>
-        <p><strong>Contato de Emergência:</strong> {cliente.contato_emergencia}</p>
-        <p><strong>Telefone de Emergência:</strong> {cliente.telefone_emergencia}</p>
+      <div class=" max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-md rounded-md p-8">
+        <h1 class="text-3xl font-semibold mb-6  text-primary">Dados do Paciente</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondar text-secondary absolute bottom-10 left-2 bg-slate-800 px-1 ">Nome:</p>
+            <p class="border rounded-xl p-3 border-slate-600">{cliente.nome} {cliente.sobrenome}</p>
+          </div>
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondar text-secondary absolute bottom-10 left-2 bg-slate-800 px-1 ">E-mail:</p>
+            <p class="border rounded-xl p-3 border-slate-600">{cliente.email}</p>
+          </div>
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondar text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">Telefone:</p>
+            <p class="border rounded-xl p-3 border-slate-600">{cliente.telefone}</p>
+          </div>
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondar text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">Data de Nascimento:</p>
+            <p class="border rounded-xl p-3 border-slate-600">{cliente.data_nascimento}</p>
+          </div>
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondar text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">CPF:</p>
+            <p class="border rounded-xl p-3 border-slate-600">{cliente.cpf}</p>
+          </div>
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondar text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">Profissão:</p>
+            <p class="border rounded-xl p-3 border-slate-600">{cliente.profissao}</p>
+          </div>
+          <div class="md:col-span-2 relative m-2">
+            <p class="font-medium text-sm text-secondar text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">Endereço:</p>
+            <p class="border rounded-xl p-3 border-slate-600">{cliente.endereco}</p>
+          </div>
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondar text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">Bairro:</p>
+            <p class="border rounded-xl p-3 border-slate-600">{cliente.bairro}</p>
+          </div>
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondar text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">CEP:</p>
+            <p class="border rounded-xl p-3 border-slate-600">{cliente.cep}</p>
+          </div>
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondar text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">Cidade:</p>
+            <p class="border rounded-xl p-3 border-slate-600">{cliente.cidade}</p>
+          </div>
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondar text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">Estado:</p>
+            <p class="border rounded-xl p-3 border-slate-600">{cliente.estado}</p>
+          </div>
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondar text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">Contato de Emergência:</p>
+            <p class="border rounded-xl p-3 border-slate-600">{cliente.contato_emergencia}</p>
+          </div>
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondar text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">Telefone de Emergência:</p>
+            <p class="border rounded-xl p-3 border-slate-600">{cliente.telefone_emergencia}</p>
+          </div>
+        </div>
       </div>
     ) : (
-      <p>Detalhes do cliente não encontrados.</p>
+      <p class="text-center">Detalhes do cliente não encontrados.</p>
     )}
+    <div class="mt-8 max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-md rounded-md p-6">
+      <h2 class="text-3xl font-semibold mb-6  text-primary">Histórico de Clínico</h2>
+      <p class="text-center">Em breve...</p>
+    </div>
+    <div class="mt-8 max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-md rounded-md p-6">
+      <h2 class="text-3xl font-semibold mb-6  text-primary">Histórico de Consultas</h2>
+      <p class="text-center">Em breve...</p>
+    </div>
+    <div class="mt-8 text-center">
+      <a href="/dashboard/clientes" class="text-blue-500 hover:underline">Voltar</a>
+
+    </div>
+    
   </section>
 </Base>

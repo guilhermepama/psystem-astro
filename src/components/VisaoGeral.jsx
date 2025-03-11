@@ -22,17 +22,30 @@ const VisaoGeral = () => {
        
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<<<<<<< Updated upstream:src/components/VisaoGeral.jsx
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
             <div className="flex items-center gap-4">
               <Users className="w-8 h-8 text-purple-600 dark:text-purple-400" />
               <div>
                 <h2 className="text-xl font-semibold">Pacientes</h2>
                 <p className="text-gray-500 dark:text-gray-400">Total: </p>
+=======
+          <a href="/dashboard/clientes">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:scale-105 transition-transform">
+              <div className="flex items-center gap-4 ">
+                <Users className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+                <div >
+                  <h2 className="text-xl font-semibold">Pacientes</h2>
+                  <p className="text-gray-500 dark:text-gray-400">
+                    Total: {totalClientes}
+                  </p>
+                </div>
+>>>>>>> Stashed changes:src/components/VisaoGeral.tsx
               </div>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:scale-105 transition-transform">
             <div className="flex items-center gap-4">
               <Calendar className="w-8 h-8 text-purple-600 dark:text-purple-400" />
               <div>
@@ -42,7 +55,7 @@ const VisaoGeral = () => {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md ">
             <div className="flex items-center gap-4">
               <CreditCard className="w-8 h-8 text-purple-600 dark:text-purple-400" />
               <div>
