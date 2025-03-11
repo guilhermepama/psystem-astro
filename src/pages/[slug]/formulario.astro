@@ -1,0 +1,62 @@
+---
+import { supabase } from "../../lib/supabase";
+
+// Extrai o slug da URL
+const { slug } = Astro.params as { slug: string };
+
+// Consulta a tabela public.clinica para obter o ID e nome, caso precise
+const { data: clinic, error } = await supabase
+  .from("clinica")
+  .select("id, nome")
+  .eq("slug", slug)
+  .single();
+
+if (error || !clinic) {
+  console.error("Erro ao buscar clínica:", error);
+  throw new Error("Clínica não encontrada.");
+}
+
+// Se for POST, processamos o cadastro
+if (Astro.request.method === "POST") {
+  const formData = await Astro.request.formData();
+  // Exemplo: nome, email, etc.
+  const nome = formData.get("nome")?.toString() ?? "";
+  // ...
+  // Insira na tabela que desejar, por exemplo clinica.cliente ou outra
+
+  // Redirecione para página de sucesso
+  return Astro.redirect(`/${slug}/cadastro-sucesso`);
+}
+---
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Formulário de Cadastro - {clinic.nome}</title>
+  </head>
+  <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+    <main class="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-800 rounded shadow mt-10">
+      <h1 class="text-3xl font-bold mb-6 text-center">
+        Formulário de Cadastro - {clinic.nome}
+      </h1>
+      <form method="POST" class="space-y-6">
+        <div>
+          <label for="nome" class="block font-medium mb-1">Nome</label>
+          <input
+            type="text"
+            id="nome"
+            name="nome"
+            required
+            class="w-full border rounded px-3 py-2"
+          />
+        </div>
+        {/* Outros campos... */}
+        <button
+          type="submit"
+          class="w-full py-3 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition-colors"
+        >
+          Enviar
+        </button>
+      </form>
+    </main>
+  </body>
+</html>

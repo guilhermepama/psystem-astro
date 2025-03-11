@@ -1,0 +1,51 @@
+---
+import { supabase } from "../../lib/supabase";
+
+// Extrai o slug da URL, assumindo a rota /<slug>
+const { slug } = Astro.params as { slug: string };
+
+// Consulta para obter os dados da clínica na tabela public.clinica
+const { data: clinic, error } = await supabase
+  .from("clinica")
+  .select("id, slug, nome, descricao, logo_url, created_at")
+  .eq("slug", slug)
+  .single();
+
+if (error) {
+  console.error("Erro ao buscar a clínica:", error);
+}
+---
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{clinic ? clinic.nome : "Clínica não encontrada"}</title>
+  </head>
+  <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+    <main class="max-w-4xl mx-auto p-6">
+      {clinic ? (
+        <article class="bg-white dark:bg-gray-800 rounded shadow p-6">
+          <h1 class="text-3xl font-bold mb-4">{clinic.nome}</h1>
+          {clinic.descricao && <p class="mb-4">{clinic.descricao}</p>}
+          {/* Se tiver logo_url, você pode exibir a logo */}
+          {clinic.logo_url && (
+            <img src={clinic.logo_url} alt={`Logo da clínica ${clinic.nome}`} class="mb-4" />
+          )}
+          <p class="text-sm text-gray-600 dark:text-gray-300">
+            Criado em: {clinic.created_at}
+          </p>
+
+          {/* Exemplo de link para um formulário de cadastro, se quiser */}
+          <a
+            href={`/${clinic.slug}/formulario`}
+            class="mt-4 inline-block text-blue-500 hover:underline"
+          >
+            Acessar formulário de cadastro
+          </a>
+        </article>
+      ) : (
+        <p class="text-center">Clínica não encontrada.</p>
+      )}
+    </main>
+  </body>
+</html>
