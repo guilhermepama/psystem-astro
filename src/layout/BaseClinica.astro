@@ -1,6 +1,11 @@
 ---
-import Header from "@/components/header-dashboard.astro";
+import HeaderClinica from "@/components/header-clinica.astro";
 
+
+const isAuthenticated = Astro.locals.isAuthenticated;
+const email = Astro.locals.email;
+// console.log("isAuthenticated", isAuthenticated);
+// console.log("email", email);
 interface Props {
   title: string;
 }
@@ -29,9 +34,10 @@ const canonicalURL = new URL(Astro.url).href;
     <meta property="og:url" content={canonicalURL} />
   </head>
   <body
-    class="flex flex-col h-full w-full dark:bg-slate-900 bg-zinc-50 dark:text-zinc-100"
-  >
-     <Header />
+    class="flex flex-col h-full w-full bg-gray-100 dark:bg-gray-900 dark:text-zinc-100"
+  > 
+
+     <HeaderClinica />
     <slot />
   </body>
 </html>

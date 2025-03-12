@@ -7,8 +7,8 @@ const especialistaId = Astro.locals.id;
 
 // Consulta na tabela "relacoes" do schema "clinica"
 const { data, error } = await supabase
-  .schema("clinica")
-  .from("relacoes")
+  
+  .from("relacoes_clientes")
   .select("cliente(id)")
   .eq("espec_id", especialistaId);
 

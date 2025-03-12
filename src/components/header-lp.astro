@@ -8,21 +8,12 @@ console.log(Astro.locals.email);
 <header class="sticky top-0 z-50 w-full bg-background/95 supports-[backdrop-filter]:bg-background/60 border-b backdrop-blur">
   <nav class="flex items-center justify-between px-4 py-3 bg-white dark:bg-zinc-800 dark:border-zinc-700">
     <!-- Logo -->
-    <a href="/" class="hidden font-semibold dark:text-white">
+    <a href="/" class="hidden  dark:text-white">
       <LogoT4P />
     </a>
     <!-- Links -->
     <ul class="flex items-center gap-8 font-medium">
-      <li>
-        <a href="/dashboard" class="text-zinc-900 dark:text-gray-200">
-          Sobre o PSYSTEM
-        </a>
-      </li>
-      <li>
-        <a href="/register" class="text-zinc-900 dark:text-gray-200">
-          Preços
-        </a>
-      </li>
+
       {isAuthenticated ? (
         <li>
           <a href="/dashboard" class="text-zinc-900 dark:text-gray-200">

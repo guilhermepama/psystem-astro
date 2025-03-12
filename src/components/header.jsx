@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import LogoT4P from "../brand/logoT4P.astro";
 
 const Header = ({ isAuthenticated, email }) => {
   return (

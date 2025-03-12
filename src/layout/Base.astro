@@ -1,6 +1,6 @@
 ---
-// import HeaderLp from "@/components/header-lp.astro";
-import Header from "@/components/header"
+import HeaderLp from "@/components/header-lp.astro";
+
 
 const isAuthenticated = Astro.locals.isAuthenticated;
 const email = Astro.locals.email;
@@ -36,8 +36,8 @@ const canonicalURL = new URL(Astro.url).href;
   <body
     class="flex flex-col h-full w-full dark:bg-zinc-900 bg-zinc-50 dark:text-zinc-100"
   > 
-    <Header client:only="react" isAuthenticated={isAuthenticated} email={email} />
-     <!-- <HeaderLp /> -->
+    
+     <HeaderLp />
     <slot />
   </body>
 </html>

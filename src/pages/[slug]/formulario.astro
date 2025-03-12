@@ -1,61 +1,251 @@
 ---
+import Base from "@/layout/Base.astro";
 import { supabase } from "../../lib/supabase";
 
-// Extrai o slug da URL
 const { slug } = Astro.params as { slug: string };
+console.log("slug:", slug);
 
-// Consulta a tabela public.clinica para obter o ID e nome, caso precise
+const { data: { session } } = await supabase.auth.getSession();
+const user_id = session?.user?.id;
+console.log("ID do usuário:", user_id);
+
 const { data: clinic, error } = await supabase
   .from("clinica")
-  .select("id, nome")
+  .select("id")
   .eq("slug", slug)
   .single();
 
-if (error || !clinic) {
-  console.error("Erro ao buscar clínica:", error);
-  throw new Error("Clínica não encontrada.");
+if (error) {
+  console.error("Erro ao buscar a clínica pelo slug:", error);
+  // Aqui você pode tratar o erro, por exemplo, redirecionar para uma página de erro
 }
 
-// Se for POST, processamos o cadastro
+const clinica_id = clinic ? clinic.id : null;
+console.log("ID da clínica:", clinica_id);
+
+// Se a requisição for POST, processamos o formulário
 if (Astro.request.method === "POST") {
   const formData = await Astro.request.formData();
-  // Exemplo: nome, email, etc.
-  const nome = formData.get("nome")?.toString() ?? "";
-  // ...
-  // Insira na tabela que desejar, por exemplo clinica.cliente ou outra
 
-  // Redirecione para página de sucesso
-  return Astro.redirect(`/${slug}/cadastro-sucesso`);
+  // Coleta os valores do formulário
+  const nome = formData.get("nome")?.toString() ?? "";
+  const sobrenome = formData.get("sobrenome")?.toString() ?? "";
+  const email = formData.get("email")?.toString() ?? "";
+  const telefone = formData.get("telefone")?.toString() ?? "";
+  const data_nascimento = formData.get("data_nascimento")?.toString() ?? "";
+  const cpf = formData.get("cpf")?.toString() ?? "";
+  const profissao = formData.get("profissao")?.toString() ?? "";
+  const endereco = formData.get("endereco")?.toString() ?? "";
+  const bairro = formData.get("bairro")?.toString() ?? "";
+  const cep = formData.get("cep")?.toString() ?? "";
+  const cidade = formData.get("cidade")?.toString() ?? "";
+  const estado = formData.get("estado")?.toString() ?? "";
+  const contato_emergencia = formData.get("contato_emergencia")?.toString() ?? "";
+  const telefone_emergencia = formData.get("telefone_emergencia")?.toString() ?? "";
+
+  if (!clinica_id) {
+  return new Response(JSON.stringify({ error: "Clínica não encontrada." }), { 
+    status: 404 
+  });
+}
+
+  // Insere na tabela public.cliente
+  const { data: novoCliente, error } = await supabase
+  .from("cliente")
+  .insert({
+    clinica_id, // Campo crucial que estava faltando
+      nome,
+      sobrenome,
+      email,
+      telefone,
+      data_nascimento: data_nascimento ? new Date(data_nascimento).toISOString() : null,
+      cpf: cpf.replace(/\D/g, ""), // Limpa a formatação
+      profissao,
+      endereco,
+      bairro,
+      cep,
+      cidade,
+      estado,
+      contato_emergencia,
+      telefone_emergencia,
+    })
+    .select("*")
+    .single();
+
+  if (error) {
+    console.error("Erro ao inserir cliente:", error);
+    return new Response(JSON.stringify({ error: "Erro ao cadastrar cliente." }), { status: 500 });
+  }
+
+  // Redireciona ou exibe mensagem de sucesso
+  return Astro.redirect(`/${slug}/sucesso`);
+
 }
 ---
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Formulário de Cadastro - {clinic.nome}</title>
-  </head>
-  <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
-    <main class="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-800 rounded shadow mt-10">
-      <h1 class="text-3xl font-bold mb-6 text-center">
-        Formulário de Cadastro - {clinic.nome}
-      </h1>
+<Base title="Cadastro de Cliente">
+
+    <main class="w-full max-w-3xl mx-auto p-6 dark:bg-gray-800 rounded-lg shadow m-8">
+      <h1 class="text-3xl font-bold mb-8 text-center">Cadastro de Cliente</h1>
       <form method="POST" class="space-y-6">
-        <div>
-          <label for="nome" class="block font-medium mb-1">Nome</label>
-          <input
-            type="text"
-            id="nome"
-            name="nome"
-            required
-            class="w-full border rounded px-3 py-2"
-          />
+        <!-- Exemplo de grid 2 colunas em telas md+ -->
+        <div class=" grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Nome -->
+          <div>
+            <label for="nome" class="block font-medium mb-1">Nome</label>
+            <input
+              type="text"
+              id="nome"
+              name="nome"
+              required
+              class="w-full rounded px-3 py-2 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <!-- Sobrenome -->
+          <div>
+            <label for="sobrenome" class="block font-medium mb-1">Sobrenome</label>
+            <input
+              type="text"
+              id="sobrenome"
+              name="sobrenome"
+              
+              class="w-full rounded px-3 py-2 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <!-- E-mail -->
+          <div>
+            <label for="email" class="block font-medium mb-1">E-mail</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              
+              class="w-full rounded px-3 py-2 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <!-- Telefone -->
+          <div>
+            <label for="telefone" class="block font-medium mb-1">Telefone</label>
+            <input
+              type="text"
+              id="telefone"
+              name="telefone"
+              
+              class="w-full rounded px-3 py-2 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <!-- Data de Nascimento -->
+          <div>
+            <label for="data_nascimento" class="block font-medium mb-1">Data de Nascimento</label>
+            <input
+              type="date"
+              id="data_nascimento"
+              name="data_nascimento"
+              
+              class="w-full rounded px-3 py-2 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <!-- CPF -->
+          <div>
+            <label for="cpf" class="block font-medium mb-1">CPF</label>
+            <input
+              type="text"
+              id="cpf"
+              name="cpf"
+              
+              class="w-full rounded px-3 py-2 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <!-- Profissão -->
+          <div>
+            <label for="profissao" class="block font-medium mb-1">Profissão</label>
+            <input
+              type="text"
+              id="profissao"
+              name="profissao"
+              class="w-full rounded px-3 py-2 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <!-- Endereço -->
+          <div>
+            <label for="endereco" class="block font-medium mb-1">Endereço</label>
+            <input
+              type="text"
+              id="endereco"
+              name="endereco"
+              class="w-full rounded px-3 py-2 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <!-- Bairro -->
+          <div>
+            <label for="bairro" class="block font-medium mb-1">Bairro</label>
+            <input
+              type="text"
+              id="bairro"
+              name="bairro"
+              class="w-full rounded px-3 py-2 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <!-- CEP -->
+          <div>
+            <label for="cep" class="block font-medium mb-1">CEP</label>
+            <input
+              type="text"
+              id="cep"
+              name="cep"
+              class="w-full rounded px-3 py-2 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <!-- Cidade -->
+          <div>
+            <label for="cidade" class="block font-medium mb-1">Cidade</label>
+            <input
+              type="text"
+              id="cidade"
+              name="cidade"
+              class="w-full rounded px-3 py-2 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <!-- Estado -->
+          <div>
+            <label for="estado" class="block font-medium mb-1">Estado</label>
+            <input
+              type="text"
+              id="estado"
+              name="estado"
+              class="w-full rounded px-3 py-2 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <!-- Contato de Emergência -->
+          <div>
+            <label for="contato_emergencia" class="block font-medium mb-1">Contato de Emergência</label>
+            <input
+              type="text"
+              id="contato_emergencia"
+              name="contato_emergencia"
+              class="w-full rounded px-3 py-2 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <!-- Telefone de Emergência -->
+          <div>
+            <label for="telefone_emergencia" class="block font-medium mb-1">Telefone de Emergência</label>
+            <input
+              type="text"
+              id="telefone_emergencia"
+              name="telefone_emergencia"
+              class="w-full rounded px-3 py-2 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
         </div>
-        {/* Outros campos... */}
-        <button
-          type="submit"
-          class="w-full py-3 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition-colors"
-        >
-          Enviar
-        </button>
+
+        <!-- Botão de Envio -->
+        <div class="pt-4">
+          <button
+            type="submit"
+            class="w-full py-3 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition-colors"
+          >
+            Cadastrar
+          </button>
+        </div>
       </form>
     </main>
   </body>

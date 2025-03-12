@@ -1,0 +1,41 @@
+---
+
+import { supabase } from "../lib/supabase";
+
+const { slug } = Astro.params as { slug: string };
+console.log("Slug da clínica (Header):", slug);
+
+
+// Consulta para obter os dados da clínica na tabela public.clinica
+const { data: clinic, error } = await supabase
+  .from("clinica")
+  .select("id, slug, nome, descricao, created_at")
+  .eq("slug", slug)
+  .single();
+
+if (error) {
+  console.error("Erro ao buscar a clínica:", error);
+}
+
+const clinica_id = clinic ? clinic.id : null;
+console.log("ID da clínica (Header):", clinica_id);
+console.log("Nome da clínica (Header):", clinic.nome);
+
+---
+
+<header class="sticky top-0 z-50 w-full bg-background/95 supports-[backdrop-filter]:bg-background/60 border-b backdrop-blur">
+  <nav class="flex items-center justify-between px-4 py-3 bg-white dark:bg-zinc-800 dark:border-zinc-700">
+    <!-- Logo -->
+    {clinic?.nome}
+    <!-- Links -->
+    <ul class="flex items-center gap-8 font-medium">
+      <li>
+        <a href={`/${slug}/formulario`} class="text-zinc-900 dark:text-gray-200">
+          Formulario
+        </a>
+      </li>
+ 
+     
+    </ul>
+  </nav>
+</header>

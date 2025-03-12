@@ -13,7 +13,7 @@ if (Astro.request.method === "POST") {
 
   // Insere dados pessoais na tabela clientes.dados_cliente
   const { data: dadosCliente, error: erroCliente } = await supabase
-    .schema("clinica")
+    
     .from("cliente")
     .insert({
       nome,
@@ -54,7 +54,7 @@ if (Astro.request.method === "POST") {
 
   // Insere os dados do formulário na tabela clientes.formulario
   const { data: formularioData, error: erroFormulario } = await supabase
-    .schema("clientes")
+    
     .from("formulario")
     .insert({
       cliente_id,

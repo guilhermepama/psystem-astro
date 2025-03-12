@@ -3,31 +3,38 @@ import BaseDashboard from "../layout/BaseDashboard.astro";
 import { supabase } from "../lib/supabase";
 import VisaoGeral from '../components/VisaoGeral.tsx';
 
-// Pegando o ID do especialista a partir de Astro.locals
+// Obtém o ID do especialista a partir de Astro.locals
 const { id } = Astro.locals;
 const especialistaId = id;
+console.log("ID do especialista:", especialistaId);
 
-
-
-// Consulta para obter os dados dos clientes (relacionados ao especialista) do schema "clinica"
+// Consulta para obter os dados dos clientes relacionados ao especialista na tabela de relações
+// Aqui, assume-se que a tabela se chama "relacoes_clientes" e que possui uma coluna "cliente(id)"
 const { data: relacoesData, error: relacoesError } = await supabase
-  .schema("clinica")
-  .from("relacoes")
-  .select("cliente(id)")
+  .from("relacoes_clientes")
+  .select("cliente_id")
   .eq("espec_id", especialistaId);
+
+
 
 if (relacoesError) {
   console.error("Erro ao buscar clientes:", relacoesError);
 }
 
-// Como essa consulta retorna um array, podemos usar .length
+// Log dos dados obtidos para verificação
+console.log("Dados dos clientes:", relacoesData);
+
+// Calcula o total de clientes, considerando que a consulta retorna um array de relações
 const totalClientes = relacoesData ? relacoesData.length : 0;
-// console.log("Total de clientes:", totalClientes);
+console.log("Total de clientes:", totalClientes);
+
+
 ---
-<BaseDashboard title="Dashboard">
-  <section class="w-full flex flex-col gap-2">
-    
-    <!-- Renderiza o componente React, passando totalClientes -->
-    <VisaoGeral client:only="react" totalClientes={totalClientes} />
-  </section>
+
+
+
+<BaseDashboard title="Psystem | Dashboard">
+  <!-- Aqui, você pode passar totalClientes para um componente ou utilizá-lo no layout -->
+  <VisaoGeral client:only="react" totalClientes={totalClientes} />
 </BaseDashboard>
+

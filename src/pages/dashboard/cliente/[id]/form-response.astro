@@ -6,7 +6,7 @@ import { supabase } from "../../../../lib/supabase";
 const { id } = Astro.params;
 
 const { data: cliente, error } = await supabase
-  .schema("clinica")
+  
   .from("cliente")
   .select(`
     id,
