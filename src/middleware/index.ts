@@ -2,7 +2,7 @@ import { defineMiddleware } from "astro:middleware";
 import { supabase } from "../lib/supabase";
 import micromatch from "micromatch";
 
-const protectedRoutes = ["/dashboard/**", "/protected/**"];
+const protectedRoutes = ["/dashboard/**", "/protected/**", "**/dashboard/**"];
 const redirectRoutes = ["/signin(|/)", "/register(|/)"];
 const proptectedAPIRoutes = ["/api/getClientes(|/)"];
 
@@ -33,6 +33,7 @@ export const onRequest = defineMiddleware(
       
       locals.email = data.user?.email!;
       locals.id = data.user?.id!;
+      
       cookies.set("sb-access-token", data?.session?.access_token!, {
         sameSite: "strict",
         path: "/",

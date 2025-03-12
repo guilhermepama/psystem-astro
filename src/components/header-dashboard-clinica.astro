@@ -3,6 +3,7 @@ import LogoT4P from "../brand/logoT4P.astro";
 import { buttonVariants } from "@/components/ui/button";
 import { supabase } from "../lib/supabase";
 
+const { slug } = Astro.params as { slug: string };
 const { email, id } = Astro.locals;
 
 const { data: dadosClinica, error: clinicaError } = await supabase
@@ -21,14 +22,14 @@ if (clinicaError) {
 ---
 
 <!-- Cabeçalho fixo no topo -->
-<header class="sticky top-0 z-50 w-full bg-white/95 dark:bg-zinc-800/95 border-b dark:border-zinc-700 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+<header class="sticky top-0 z-50 w-full bg-white/95 dark:bg-slate-800/95 border-b dark:border-zinc-700 backdrop-blur supports-[backdrop-filter]:bg-white/60">
   <!-- Barra de navegação -->
   <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-0">
     <div class="flex h-16 items-center justify-between">
       <!-- Esquerda: Logo + Marca -->
       <div class="flex items-center text-xl">
-        <a href="/dashboard" class=" text-zinc-900 dark:text-white">
-          <LogoT4P /><p>&nbsp;&nbsp;|&nbsp;&nbsp;  {dadosClinica && dadosClinica.length > 0 && dadosClinica[0].clinica
+        <a href={`/${slug}/dashboard`} class=" text-zinc-900 dark:text-white">
+          <LogoT4P /><p>&nbsp;&nbsp;|dssss&nbsp;&nbsp;  {dadosClinica && dadosClinica.length > 0 && dadosClinica[0].clinica
             ? dadosClinica[0].clinica.nome
             : "Nome não encontrado"}</p>
         </a>

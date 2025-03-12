@@ -1,19 +1,23 @@
 ---
-import BaseDashboard from "../layout/BaseDashboard.astro";
-import { supabase } from "../lib/supabase";
-import VisaoGeral from '../components/VisaoGeral.tsx';
+import BaseDashboard from "../../layout/BaseDashboardClinica.astro";
+import { supabase } from "../../lib/supabase";
+import VisaoGeral from '../../components/VisaoGeralClinica.tsx';
 
+const { slug } = Astro.params as { slug: string };
+console.log("slug:", slug);
+
+// Obtém o ID do especialista a partir de Astro.locals
 const { id } = Astro.locals;
-const especialistaId = id;
-// console.log("ID do especialista:", especialistaId);
+const userId = id;
+console.log("ID do usuário logado:", userId);
 
 // Consulta para obter os dados dos clientes relacionados ao especialista na tabela de relações
 // Aqui, assume-se que a tabela se chama "relacoes_clientes" e que possui uma coluna "cliente(id)"
 const { data: relacoesData, error: relacoesError } = await supabase
   .from("relacoes_clientes")
-  .select("cliente_id")
-  .eq("espec_id", especialistaId);
-
+  .select("*, clinica(*), cliente:cliente_id(id, nome, sobrenome, email, telefone)")
+  .eq("espec_id", userId)
+  .eq("clinica.slug", slug);
 
 
 if (relacoesError) {
@@ -21,11 +25,11 @@ if (relacoesError) {
 }
 
 // Log dos dados obtidos para verificação
-// console.log("(Dashboard) Dados dos clientes:", relacoesData);
+console.log("(Dashboard) Dados dos clientes:", relacoesData);
 
 // Calcula o total de clientes, considerando que a consulta retorna um array de relações
 const totalClientes = relacoesData ? relacoesData.length : 0;
-// console.log("(Dashboard) Total de clientes:", totalClientes);
+console.log("(Dashboard) Total de clientes:", totalClientes);
 
 
 ---
@@ -34,6 +38,6 @@ const totalClientes = relacoesData ? relacoesData.length : 0;
 
 <BaseDashboard title="Psystem | Dashboard">
   <!-- Aqui, você pode passar totalClientes para um componente ou utilizá-lo no layout -->
-  <VisaoGeral client:only="react" totalClientes={totalClientes} />
+  <VisaoGeral client:only="react" totalClientes={totalClientes} slugClinica={slug} />
 </BaseDashboard>
 

@@ -1,0 +1,47 @@
+---
+import BaseDashboard from "../../../layout/BaseDashboardClinica.astro";
+import { supabase } from "../../../lib/supabase";
+import ClientList from "../../../components/listaPacientes";
+
+const { slug } = Astro.params as { slug: string };
+
+const { data: clinicData, error: clinicError } = await supabase
+  .from("clinica")
+  .select("id")
+  .eq("slug", slug)
+  .single();
+
+if (clinicError) {
+  console.error("Erro ao buscar clínica:", clinicError);
+  // Trate o erro conforme necessário
+}
+
+const clinicId = clinicData?.id;
+console.log("ID da clínica:", clinicId);
+
+// Obtenha o ID do especialista a partir de Astro.locals
+const { id } = Astro.locals;
+const especialistaId = id;
+
+const { data, error } = await supabase
+  .from("relacoes_clientes")
+  .select("cliente:cliente_id(id, nome, sobrenome, email, telefone), clinica:clinica(id, nome, slug)")
+  .eq("espec_id", especialistaId)
+  .eq("clinica_id", clinicId);
+if (error) {
+  console.error("Erro ao buscar clientes:", error);
+}
+
+console.log("(Clientes) Dados dos clientes:", data);
+
+
+---
+<BaseDashboard title="Psystem | Clientes">
+  <section>
+    {data && data.length > 0 ? (
+      <ClientList client:only="react" clientes={data} slugClinca={slug}/>
+    ) : (
+      <p class="text-center">Nenhum cliente encontrado.</p>
+    )}
+  </section>
+</BaseDashboard>

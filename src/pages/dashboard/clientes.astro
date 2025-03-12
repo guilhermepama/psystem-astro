@@ -9,16 +9,16 @@ const especialistaId = id;
 
 const { data, error } = await supabase
   .from("relacoes_clientes")
-  // Seleciona todas as colunas da tabela relacoes_clientes
-  // e, via relacionamento, os dados do cliente referenciado pela coluna "cliente_id"
-  .select("*, cliente:cliente_id(id, nome, sobrenome, email, telefone)")
+  // Seleciona todas as colunas da tabela relacoes_clientes,
+  // e, via relacionamento, os dados do cliente e da clínica
+  .select("*, cliente:cliente_id(id, nome, sobrenome, email, telefone), clinica(*)")
   .eq("espec_id", especialistaId);
 
 if (error) {
   console.error("Erro ao buscar clientes:", error);
-} else {
-  console.log("Dados dos clientes:", data);
 }
+
+console.log("(Clientes) Dados dos clientes:", data);
 ---
 <BaseDashboard title="Psystem | Clientes">
   <section>

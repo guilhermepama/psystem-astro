@@ -1,0 +1,164 @@
+---
+import Base from "../../../../../layout/BaseDashboard.astro";
+import { supabase } from "../../../../../lib/supabase";
+
+// O ID do cliente vem da URL
+const { id } = Astro.params;
+
+const { data: cliente, error } = await supabase
+  
+  .from("cliente")
+  .select(`
+    id,
+    nome,
+    sobrenome,
+    email,
+    telefone,
+    data_nascimento,
+    cpf,
+    profissao,
+    endereco,
+    bairro,
+    cep,
+    cidade,
+    estado,
+    contato_emergencia,
+    telefone_emergencia
+  `)
+  .eq("id", id)
+  .single();
+
+if (error) {
+  console.error("Erro ao buscar detalhes do cliente:", error);
+}
+---
+<Base title="Detalhes do Cliente">
+  <section class="py-24 px-4  dark:bg-gray-900">
+    {cliente ? (
+      <div class="max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-md rounded-md p-8">
+        <h1 class="text-3xl font-medium mb-6 text-primary">Dados do Paciente</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Nome e Sobrenome */}
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">Nome:</p>
+            <p class="border rounded-xl p-3 border-slate-600">
+              {cliente.nome || "Não informado"} {cliente.sobrenome || ""}
+            </p>
+          </div>
+
+          {/* E-mail */}
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">E-mail:</p>
+            <p class="border rounded-xl p-3 border-slate-600">
+              {cliente.email || "Não informado"}
+            </p>
+          </div>
+
+          {/* Telefone */}
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">Telefone:</p>
+            <p class="border rounded-xl p-3 border-slate-600">
+              {cliente.telefone || "Não informado"}
+            </p>
+          </div>
+
+          {/* Data de Nascimento */}
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">Data de Nascimento:</p>
+            <p class="border rounded-xl p-3 border-slate-600">
+              {cliente.data_nascimento || "Não informado"}
+            </p>
+          </div>
+
+          {/* CPF */}
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">CPF:</p>
+            <p class="border rounded-xl p-3 border-slate-600">
+              {cliente.cpf || "Não informado"}
+            </p>
+          </div>
+
+          {/* Profissão */}
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">Profissão:</p>
+            <p class="border rounded-xl p-3 border-slate-600">
+              {cliente.profissao || "Não informado"}
+            </p>
+          </div>
+
+          {/* Endereço */}
+          <div class="md:col-span-2 relative m-2">
+            <p class="font-medium text-sm text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">Endereço:</p>
+            <p class="border rounded-xl p-3 border-slate-600">
+              {cliente.endereco || "Não informado"}
+            </p>
+          </div>
+
+          {/* Bairro */}
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">Bairro:</p>
+            <p class="border rounded-xl p-3 border-slate-600">
+              {cliente.bairro || "Não informado"}
+            </p>
+          </div>
+
+          {/* CEP */}
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">CEP:</p>
+            <p class="border rounded-xl p-3 border-slate-600">
+              {cliente.cep || "Não informado"}
+            </p>
+          </div>
+
+          {/* Cidade */}
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">Cidade:</p>
+            <p class="border rounded-xl p-3 border-slate-600">
+              {cliente.cidade || "Não informado"}
+            </p>
+          </div>
+
+          {/* Estado */}
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">Estado:</p>
+            <p class="border rounded-xl p-3 border-slate-600">
+              {cliente.estado || "Não informado"}
+            </p>
+          </div>
+
+          {/* Contato de Emergência */}
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">Contato de Emergência:</p>
+            <p class="border rounded-xl p-3 border-slate-600">
+              {cliente.contato_emergencia || "Não informado"}
+            </p>
+          </div>
+
+          {/* Telefone de Emergência */}
+          <div class="relative m-2">
+            <p class="font-medium text-sm text-secondary absolute bottom-10 left-2 bg-slate-800 px-1">Telefone de Emergência:</p>
+            <p class="border rounded-xl p-3 border-slate-600">
+              {cliente.telefone_emergencia || "Não informado"}
+            </p>
+          </div>
+        </div>
+      </div>
+    ) : (
+      <p class="text-center">Detalhes do cliente não encontrados.</p>
+    )}
+
+    <div class="mt-8 max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-md rounded-md p-6">
+      <h2 class="text-3xl font-medium mb-6 text-primary">Histórico Clínico</h2>
+      <p class="text-center">Em breve...</p>
+    </div>
+
+    <div class="mt-8 max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-md rounded-md p-6">
+      <h2 class="text-3xl font-medium mb-6 text-primary">Histórico de Consultas</h2>
+      <p class="text-center">Em breve...</p>
+    </div>
+
+    <div class="mt-8 text-center">
+      <a href="/dashboard/clientes" class="text-blue-500 hover:underline">Voltar</a>
+    </div>
+  </section>
+</Base>
