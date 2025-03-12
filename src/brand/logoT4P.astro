@@ -1,5 +1,14 @@
-<html>
-    <div class="">
-        <a href={""}><span class="font-normal">T<span class="font-bold text-primary">4</span>P &#123; <span class="font-light text-primary">PSIstem</span> &#125;</span></Link>
-      </div>
-</html>
+---
+// LogoT4P.astro
+export interface Props {
+  link: string;
+}
+
+const { link } = Astro.props;
+---
+<a href={link} class="flex items-center text-xl">
+  <span class="font-normal">
+    T<span class="font-bold text-primary">4</span>P {"{"} 
+    <span class="font-light text-primary">PSIstem</span> {"}"}
+  </span>
+</a>

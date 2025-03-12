@@ -13,7 +13,7 @@ const VisaoGeral = ({ totalClientes, slugClinica }: VisaoGeralProps) => {
     <div className="min-h-screen p-8 dark:bg-gray-900 dark:text-white">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Visão Geral</h1>
+          <h1 className="text-2xl font-semibold">Visão Geral</h1>
           {/* Utilizando o Button do shadcn UI com o atributo asChild para encapsular um link */}
           <Button
             asChild

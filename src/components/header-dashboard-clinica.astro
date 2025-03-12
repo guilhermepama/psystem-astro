@@ -5,6 +5,7 @@ import { supabase } from "../lib/supabase";
 
 const { slug } = Astro.params as { slug: string };
 const { email, id } = Astro.locals;
+const link = `/${slug}/dashboard`;
 
 const { data: dadosClinica, error: clinicaError } = await supabase
   .from("clinica_role")
@@ -28,27 +29,25 @@ if (clinicaError) {
     <div class="flex h-16 items-center justify-between">
       <!-- Esquerda: Logo + Marca -->
       <div class="flex items-center text-xl">
-        <a href={`/${slug}/dashboard`} class=" text-zinc-900 dark:text-white">
-          <LogoT4P /><p>&nbsp;&nbsp;|dssss&nbsp;&nbsp;  {dadosClinica && dadosClinica.length > 0 && dadosClinica[0].clinica
+        
+          <LogoT4P link={link} /><p>&nbsp;&nbsp;|&nbsp;&nbsp;  {dadosClinica && dadosClinica.length > 0 && dadosClinica[0].clinica
             ? dadosClinica[0].clinica.nome
             : "Nome não encontrado"}</p>
-        </a>
+      
       </div>
 
       <!-- Direita: Menu Desktop (MD+) -->
       <div class="hidden md:flex items-center gap-6">
 
-        <a href="/dashboard" class="text-zinc-900 dark:text-gray-200 hover:text-primary hover:border-b-2 hover:py-1 hover:border-secondary transition-all">
-          Dashboard
-        </a>
-        <a href="/dashboard/clientes" class="text-zinc-900 dark:text-gray-200  hover:text-primary hover:border-b-2 hover:py-1 hover:border-secondary transition-all">
+   
+        <a href={`/${slug}/clientes`} class="text-zinc-900 dark:text-gray-200  hover:text-primary hover:border-b-2 hover:py-1 hover:border-secondary transition-all">
           Pacientes
         
         </a>
-        <a href="/dashboard/clientes" class="text-zinc-900 dark:text-gray-200  hover:text-primary hover:border-b-2 hover:py-1 hover:border-secondary transition-all">
+        <a href={`/${slug}/agenda`} class="text-zinc-900 dark:text-gray-200  hover:text-primary hover:border-b-2 hover:py-1 hover:border-secondary transition-all">
           Agenda
         </a>
-        <a href="/dashboard/clientes" class="text-zinc-900 dark:text-gray-200  hover:text-primary hover:border-b-2 hover:py-1 hover:border-secondary transition-all">
+        <a href={`/${slug}/pagamentos`} class="text-zinc-900 dark:text-gray-200  hover:text-primary hover:border-b-2 hover:py-1 hover:border-secondary transition-all">
           Pagamentos
         </a>
         <p class="max-w-prose text-md text-indigo-600 dark:text-indigo-400 font-semibold">

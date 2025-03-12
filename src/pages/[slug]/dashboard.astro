@@ -11,14 +11,26 @@ const { id } = Astro.locals;
 const userId = id;
 console.log("ID do usuário logado:", userId);
 
-// Consulta para obter os dados dos clientes relacionados ao especialista na tabela de relações
-// Aqui, assume-se que a tabela se chama "relacoes_clientes" e que possui uma coluna "cliente(id)"
+// Primeiro, busca o ID da clínica referente ao slug
+const { data: clinicData, error: clinicError } = await supabase
+  .from("clinica")
+  .select("id")
+  .eq("slug", slug)
+  .single();
+
+if (clinicError) {
+  console.error("Erro ao buscar clínica:", clinicError);
+}
+
+const clinicId = clinicData?.id;
+console.log("ID da clínica:", clinicId);
+
+// Consulta para obter os dados dos clientes relacionados ao especialista e à clínica
 const { data: relacoesData, error: relacoesError } = await supabase
   .from("relacoes_clientes")
   .select("*, clinica(*), cliente:cliente_id(id, nome, sobrenome, email, telefone)")
   .eq("espec_id", userId)
-  .eq("clinica.slug", slug);
-
+  .eq("clinica_id", clinicId);
 
 if (relacoesError) {
   console.error("Erro ao buscar clientes:", relacoesError);
@@ -30,14 +42,7 @@ console.log("(Dashboard) Dados dos clientes:", relacoesData);
 // Calcula o total de clientes, considerando que a consulta retorna um array de relações
 const totalClientes = relacoesData ? relacoesData.length : 0;
 console.log("(Dashboard) Total de clientes:", totalClientes);
-
-
 ---
-
-
-
 <BaseDashboard title="Psystem | Dashboard">
-  <!-- Aqui, você pode passar totalClientes para um componente ou utilizá-lo no layout -->
   <VisaoGeral client:only="react" totalClientes={totalClientes} slugClinica={slug} />
 </BaseDashboard>
-
