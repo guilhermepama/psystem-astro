@@ -7,6 +7,8 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
   const provider = formData.get("provider")?.toString();
+  // Extraímos o slug enviado via formulário (campo hidden)
+  const slug = formData.get("slug")?.toString() || "";
 
   if (provider) {
     const { data, error } = await supabase.auth.signInWithOAuth({
@@ -50,5 +52,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     secure: true,
   });
 
-  return redirect("/dashboard");
+  // Se o slug foi enviado, redireciona para /{slug}/dashboard; caso contrário, para /dashboard
+  const redirectUrl = slug ? `/${slug}/dashboard` : "/dashboard";
+  return redirect(redirectUrl);
 };

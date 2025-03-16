@@ -11,10 +11,10 @@ const { id } = Astro.locals;
 const userId = id;
 console.log("ID do usuário logado:", userId);
 
-// Primeiro, busca o ID da clínica referente ao slug
+// Busca os dados da clínica (id e nome) referente ao slug
 const { data: clinicData, error: clinicError } = await supabase
   .from("clinica")
-  .select("id")
+  .select("id, nome")
   .eq("slug", slug)
   .single();
 
@@ -23,12 +23,12 @@ if (clinicError) {
 }
 
 const clinicId = clinicData?.id;
-console.log("ID da clínica:", clinicId);
+const clinicName = clinicData?.nome || "Clínica não encontrada";
 
 // Consulta para obter os dados dos clientes relacionados ao especialista e à clínica
 const { data: relacoesData, error: relacoesError } = await supabase
   .from("relacoes_clientes")
-  .select("*, clinica(*), cliente:cliente_id(id, nome, sobrenome, email, telefone)")
+  .select("*, cliente:cliente_id(id, nome, sobrenome, email, telefone)")
   .eq("espec_id", userId)
   .eq("clinica_id", clinicId);
 
@@ -39,10 +39,10 @@ if (relacoesError) {
 // Log dos dados obtidos para verificação
 console.log("(Dashboard) Dados dos clientes:", relacoesData);
 
-// Calcula o total de clientes, considerando que a consulta retorna um array de relações
+// Calcula o total de clientes
 const totalClientes = relacoesData ? relacoesData.length : 0;
 console.log("(Dashboard) Total de clientes:", totalClientes);
 ---
-<BaseDashboard title="Psystem | Dashboard">
+<BaseDashboard title={`Psystem | ${clinicName} - Dashboard`}>
   <VisaoGeral client:only="react" totalClientes={totalClientes} slugClinica={slug} />
 </BaseDashboard>

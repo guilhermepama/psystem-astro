@@ -1,0 +1,92 @@
+  ---
+  import Base from "@/layout/BaseClinica.astro";
+  import { supabase } from "../../lib/supabase";
+
+  const { slug } = Astro.params as { slug: string };
+  console.log("slug:", slug);
+
+  const { data: { session } } = await supabase.auth.getSession();
+  const user_id = session?.user?.id;
+  console.log("ID do usuário:", user_id);
+
+  const { data: clinic, error } = await supabase
+    .from("clinica")
+    .select("id")
+    .eq("slug", slug)
+    .single();
+
+  if (error) {
+    console.error("Erro ao buscar a clínica pelo slug:", error);
+    // Aqui você pode tratar o erro, por exemplo, redirecionar para uma página de erro
+  }
+
+  const clinica_id = clinic ? clinic.id : null;
+  console.log("ID da clínica:", clinica_id);
+
+  // Se a requisição for POST, processamos o formulário
+  if (Astro.request.method === "POST") {
+    const formData = await Astro.request.formData();
+
+    // Coleta os valores do formulário
+    const nome = formData.get("nome")?.toString() ?? "";
+    const sobrenome = formData.get("sobrenome")?.toString() ?? "";
+    const email = formData.get("email")?.toString() ?? "";
+    const telefone = formData.get("telefone")?.toString() ?? "";
+    const data_nascimento = formData.get("data_nascimento")?.toString() ?? "";
+    const cpf = formData.get("cpf")?.toString() ?? "";
+    const profissao = formData.get("profissao")?.toString() ?? "";
+    const endereco = formData.get("endereco")?.toString() ?? "";
+    const bairro = formData.get("bairro")?.toString() ?? "";
+    const cep = formData.get("cep")?.toString() ?? "";
+    const cidade = formData.get("cidade")?.toString() ?? "";
+    const estado = formData.get("estado")?.toString() ?? "";
+    const contato_emergencia = formData.get("contato_emergencia")?.toString() ?? "";
+    const telefone_emergencia = formData.get("telefone_emergencia")?.toString() ?? "";
+
+    if (!clinica_id) {
+    return new Response(JSON.stringify({ error: "Clínica não encontrada." }), { 
+      status: 404 
+    });
+  }
+
+    // Insere na tabela public.cliente
+    const { data: novoCliente, error } = await supabase
+    .from("cliente")
+    .insert({
+      clinica_id, // Campo crucial que estava faltando
+        nome,
+        sobrenome,
+        email,
+        telefone,
+        data_nascimento: data_nascimento ? new Date(data_nascimento).toISOString() : null,
+        cpf: cpf.replace(/\D/g, ""), // Limpa a formatação
+        profissao,
+        endereco,
+        bairro,
+        cep,
+        cidade,
+        estado,
+        contato_emergencia,
+        telefone_emergencia,
+      })
+      .select("*")
+      .single();
+
+    if (error) {
+      console.error("Erro ao inserir cliente:", error);
+      return new Response(JSON.stringify({ error: "Erro ao cadastrar cliente." }), { status: 500 });
+    }
+
+    // Redireciona ou exibe mensagem de sucesso
+    return Astro.redirect(`/${slug}/sucesso`);
+
+  }
+  ---
+  <Base title="Cadastro de Cliente">
+
+      <main class="w-full max-w-3xl mx-auto p-6 dark:bg-gray-800 rounded-lg shadow m-8">
+        <h1 class="text-3xl font-bold mb-8 text-center">Cadastro de Cliente</h1>
+        
+      </main>
+    </body>
+  </html>

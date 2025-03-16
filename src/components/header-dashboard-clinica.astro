@@ -7,17 +7,18 @@ const { slug } = Astro.params as { slug: string };
 const { email, id } = Astro.locals;
 const link = `/${slug}/dashboard`;
 
-const { data: dadosClinica, error: clinicaError } = await supabase
-  .from("clinica_role")
-  .select("*, clinica(*)")
-  .eq("user_id", id);
+// Consulta direta na tabela "clinica" para obter os dados da clínica pelo slug
+const { data: clinicData, error: clinicError } = await supabase
+  .from("clinica")
+  .select("nome")
+  .eq("slug", slug)
+  .single();
 
-if (clinicaError) {
-  console.error("Erro ao buscar clinica:", clinicaError);
+if (clinicError) {
+  console.error("Erro ao buscar clínica:", clinicError);
 }
 
-// console.log("(Header-Dashboard) Dados da clinica:", dadosClinica);
-// console.log("(Header-Dashboard) ID:", id);
+console.log("(Header-Dashboard) Dados da clínica:", clinicData);
 
 
 ---
@@ -30,9 +31,8 @@ if (clinicaError) {
       <!-- Esquerda: Logo + Marca -->
       <div class="flex items-center text-xl">
         
-          <LogoT4P link={link} /><p>&nbsp;&nbsp;|&nbsp;&nbsp;  {dadosClinica && dadosClinica.length > 0 && dadosClinica[0].clinica
-            ? dadosClinica[0].clinica.nome
-            : "Nome não encontrado"}</p>
+        <LogoT4P link={link} />
+        <p>&nbsp;&nbsp;|&nbsp;&nbsp; {clinicData ? clinicData.nome : "Nome não encontrado"}</p>
       
       </div>
 
@@ -54,7 +54,7 @@ if (clinicaError) {
           {email}
         </p>
         <a
-          href="/api/auth/signout"
+          href=`/api/auth/signout?slug=${slug}`
           class={buttonVariants({ variant: "outline" })}
         >
           Sair
@@ -106,7 +106,7 @@ if (clinicaError) {
         Clientes
       </a>
       <a
-        href="/api/auth/signout"
+        href=`${slug}/api/auth/logout`
         class={buttonVariants({ variant: "outline" })}
       >
         Sair

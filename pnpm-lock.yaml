@@ -59,9 +59,6 @@ importers:
       tailwind-merge:
         specifier: ^3.0.2
         version: 3.0.2
-      tailwindcss:
-        specifier: ^3.4.0
-        version: 3.4.17
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.17)
@@ -81,12 +78,21 @@ importers:
       '@types/react-dom':
         specifier: ^19.0.4
         version: 19.0.4(@types/react@19.0.10)
+      autoprefixer:
+        specifier: ^10.4.21
+        version: 10.4.21(postcss@8.5.3)
+      postcss:
+        specifier: ^8.5.3
+        version: 8.5.3
       prettier:
         specifier: ^3.5.3
         version: 3.5.3
       prettier-plugin-astro:
         specifier: ^0.12.2
         version: 0.12.3
+      tailwindcss:
+        specifier: ^3.4.17
+        version: 3.4.17
       typescript:
         specifier: ^5.8.2
         version: 5.8.2
@@ -1297,8 +1303,8 @@ packages:
   async-sema@3.1.1:
     resolution: {integrity: sha512-tLRNUXati5MFePdAk8dw7Qt7DpxPB60ofAgn8WRhW6a2rcimZnYBP9oxHiv0OHy+Wz7kPMG+t4LGdt31+4EmGg==}
 
-  autoprefixer@10.4.20:
-    resolution: {integrity: sha512-XY25y5xSv/wEoqzDyXXME4AFfkZI0P23z6Fs3YgymDnKJkCGOnkL0iTxCa85UTqaSgfcqyf3UA6+c7wUvx/16g==}
+  autoprefixer@10.4.21:
+    resolution: {integrity: sha512-O+A6LWV5LDHSJD3LjHYoNi4VLsj/Whi7k6zG12xTYaU4cQ8oxQGckXNX8cRHK5yOZ/ppVHe0ZBXGzSV9jXdVbQ==}
     engines: {node: ^10 || ^12 || >=14}
     hasBin: true
     peerDependencies:
@@ -2931,7 +2937,7 @@ snapshots:
   '@astrojs/tailwind@5.1.5(astro@4.16.18(@types/node@22.13.9)(lightningcss@1.29.2)(rollup@4.34.9)(typescript@5.8.2))(tailwindcss@3.4.17)':
     dependencies:
       astro: 4.16.18(@types/node@22.13.9)(lightningcss@1.29.2)(rollup@4.34.9)(typescript@5.8.2)
-      autoprefixer: 10.4.20(postcss@8.5.3)
+      autoprefixer: 10.4.21(postcss@8.5.3)
       postcss: 8.5.3
       postcss-load-config: 4.0.2(postcss@8.5.3)
       tailwindcss: 3.4.17
@@ -3952,7 +3958,7 @@ snapshots:
 
   async-sema@3.1.1: {}
 
-  autoprefixer@10.4.20(postcss@8.5.3):
+  autoprefixer@10.4.21(postcss@8.5.3):
     dependencies:
       browserslist: 4.24.4
       caniuse-lite: 1.0.30001702
