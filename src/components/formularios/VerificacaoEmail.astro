@@ -1,13 +1,11 @@
 ---
-
-
 const { clienteId } = Astro.props;
 ---
 
 <div class="verificacao-email">
   <form id="email-form" class="space-y-4">
     <div class="form-group">
-      <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+      <label for="email" class="block text-sm font-medium text-gray-300 mb-1">
         Seu Email
       </label>
       <input 
@@ -54,8 +52,6 @@ const { clienteId } = Astro.props;
     
     try {
       console.log('Verificando email para cliente:', clienteId);
-      
-
 
       // Criar cliente Supabase apenas com os cabeçalhos necessários
       const supabase = createClient(
@@ -166,12 +162,6 @@ const { clienteId } = Astro.props;
         console.log('Verificando email:', email);
         console.log('ID do cliente:', clienteId);
         
-
-
-
-
-
-
         // Usar a função global definida acima, sem passar formId e token
         const verificado = await window.verificarEmailCliente(clienteId, email);
         
@@ -191,49 +181,188 @@ const { clienteId } = Astro.props;
             <p>Email verificado com sucesso! Agora você pode atualizar seus dados.</p>
           </div>
           
-          <div id="dados-cliente">
-            <h2 class="text-xl font-bold mb-4">Seus Dados</h2>
-            <div class="bg-violet-800 p-4 rounded">
-              <p class="mb-2"><strong>Nome:</strong> <span id="nome-cliente">${dadosCliente.nome || 'Não informado'}</span></p>
-              <p class="mb-2"><strong>Email:</strong> <span id="email-cliente">${email}</span></p>
-              <!-- Outros campos do cliente -->
+          <form id="atualizar-form" class="space-y-4">
+            <!-- Inputs ocultos para campos de sistema -->
+            <input type="hidden" name="id" value="${dadosCliente.id}" />
+            <input type="hidden" name="created_at" value="${dadosCliente.created_at}" />
+            <input type="hidden" name="created_by" value="${dadosCliente.created_by}" />
+            <input type="hidden" name="clinica_id" value="${dadosCliente.clinica_id}" />
+            <input type="hidden" name="is_public" value="${dadosCliente.is_public ? 'true' : 'false'}" />
+            
+            <!-- Campos editáveis -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-group">
+                <label for="nome" class="block text-sm font-medium text-gray-300 mb-1">Nome</label>
+                <input 
+                  type="text" 
+                  id="nome" 
+                  name="nome" 
+                  value="${dadosCliente.nome || ''}" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div class="form-group">
+                <label for="sobrenome" class="block text-sm font-medium text-gray-300 mb-1">Sobrenome</label>
+                <input 
+                  type="text" 
+                  id="sobrenome" 
+                  name="sobrenome" 
+                  value="${dadosCliente.sobrenome || ''}" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
             </div>
-          </div>
-          
-          <div class="mt-6">
-            <h2 class="text-xl font-bold mb-4">Atualizar Dados</h2>
-            <form id="atualizar-form" class="space-y-4">
-              <input type="hidden" id="cliente-id" value="${clienteId}" />
-              <input type="hidden" id="cliente-email" value="${email}" />
-              
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="form-group">
-                  <label for="nome" class="block text-sm font-medium text-gray-700 mb-1">
-                    Nome Completo
-                  </label>
-                  <input 
-                    type="text" 
-                    id="nome" 
-                    name="nome"
-                    value="${dadosCliente.nome || ''}"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                
-                <!-- Outros campos para atualização -->
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-group">
+                <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email" 
+                  value="${dadosCliente.email || ''}" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
               </div>
-              
-              <div class="flex justify-end">
-                <button 
-                  type="submit"
-                  class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Atualizar Dados
-                </button>
+              <div class="form-group">
+                <label for="telefone" class="block text-sm font-medium text-gray-300 mb-1">Telefone</label>
+                <input 
+                  type="text" 
+                  id="telefone" 
+                  name="telefone" 
+                  value="${dadosCliente.telefone || ''}" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
               </div>
-            </form>
-          </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-group">
+                <label for="data_nascimento" class="block text-sm font-medium text-gray-300 mb-1">Data de Nascimento</label>
+                <input 
+                  type="date" 
+                  id="data_nascimento" 
+                  name="data_nascimento" 
+                  value="${dadosCliente.data_nascimento || ''}" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div class="form-group">
+                <label for="cpf" class="block text-sm font-medium text-gray-300 mb-1">CPF</label>
+                <input 
+                  type="text" 
+                  id="cpf" 
+                  name="cpf" 
+                  value="${dadosCliente.cpf || ''}" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-group">
+                <label for="profissao" class="block text-sm font-medium text-gray-300 mb-1">Profissão</label>
+                <input 
+                  type="text" 
+                  id="profissao" 
+                  name="profissao" 
+                  value="${dadosCliente.profissao || ''}" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div class="form-group">
+                <label for="endereco" class="block text-sm font-medium text-gray-300 mb-1">Endereço</label>
+                <input 
+                  type="text" 
+                  id="endereco" 
+                  name="endereco" 
+                  value="${dadosCliente.endereco || ''}" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-group">
+                <label for="bairro" class="block text-sm font-medium text-gray-300 mb-1">Bairro</label>
+                <input 
+                  type="text" 
+                  id="bairro" 
+                  name="bairro" 
+                  value="${dadosCliente.bairro || ''}" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div class="form-group">
+                <label for="cep" class="block text-sm font-medium text-gray-300 mb-1">CEP</label>
+                <input 
+                  type="text" 
+                  id="cep" 
+                  name="cep" 
+                  value="${dadosCliente.cep || ''}" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-group">
+                <label for="cidade" class="block text-sm font-medium text-gray-300 mb-1">Cidade</label>
+                <input 
+                  type="text" 
+                  id="cidade" 
+                  name="cidade" 
+                  value="${dadosCliente.cidade || ''}" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div class="form-group">
+                <label for="estado" class="block text-sm font-medium text-gray-300 mb-1">Estado</label>
+                <input 
+                  type="text" 
+                  id="estado" 
+                  name="estado" 
+                  value="${dadosCliente.estado || ''}" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-group">
+                <label for="contato_emergencia" class="block text-sm font-medium text-gray-300 mb-1">Contato de Emergência</label>
+                <input 
+                  type="text" 
+                  id="contato_emergencia" 
+                  name="contato_emergencia" 
+                  value="${dadosCliente.contato_emergencia || ''}" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div class="form-group">
+                <label for="telefone_emergencia" class="block text-sm font-medium text-gray-300 mb-1">Telefone de Emergência</label>
+                <input 
+                  type="text" 
+                  id="telefone_emergencia" 
+                  name="telefone_emergencia" 
+                  value="${dadosCliente.telefone_emergencia || ''}" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+            
+            <div class="flex justify-end">
+              <button 
+                type="submit"
+                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                Atualizar Dados
+              </button>
+            </div>
+          </form>
         `;
+
+
         
         // Mostrar o container do formulário
         formContainer.classList.remove('hidden');
@@ -248,59 +377,3 @@ const { clienteId } = Astro.props;
     });
   });
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
