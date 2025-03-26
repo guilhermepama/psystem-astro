@@ -1,0 +1,98 @@
+---
+const { clientId, formId, token } = Astro.props;
+---
+
+<div class="verificacao-email-step">
+  <h2 class="text-2xl font-bold mb-6">Verificação de Email</h2>
+  
+  <p class="mb-4">
+    Para prosseguir com a atualização dos seus dados, por favor, confirme seu email cadastrado.
+  </p>
+  
+  <form id="verificacao-email-form" class="space-y-4">
+    <div class="form-group">
+      <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+        Seu Email
+      </label>
+      <input 
+        type="email" 
+        id="email" 
+        name="email"
+        required
+        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+        placeholder="seu.email@exemplo.com"
+      />
+    </div>
+    
+    <div id="email-error" class="hidden text-red-600 text-sm"></div>
+    
+    <div class="flex justify-end">
+      <button 
+        type="submit"
+        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      >
+        Verificar Email
+      </button>
+    </div>
+  </form>
+</div>
+
+<script define:vars={{ clientId, formId, token }}>
+  document.addEventListener('DOMContentLoaded', () => {
+    const emailForm = document.getElementById('verificacao-email-form');
+    const emailError = document.getElementById('email-error');
+    
+    emailForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value.trim();
+      if (!email) {
+        emailError.textContent = 'Por favor, informe seu email.';
+        emailError.classList.remove('hidden');
+        return;
+      }
+      
+      try {
+        // Verificar se o email corresponde ao cliente
+        const response = await fetch('/api/verificar-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-formid': formId,
+            'x-public-token': token
+          },
+          body: JSON.stringify({ 
+            clientId, 
+            email 
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // Email verificado com sucesso
+          emailError.classList.add('hidden');
+          
+          // Armazenar o email verificado para uso nas próximas etapas
+          localStorage.setItem('clienteEmail', email);
+          
+          // Carregar dados do cliente para a próxima etapa
+          if (window.loadClientData) {
+            window.loadClientData(email);
+          }
+          
+          // Avançar para a próxima etapa
+          window.goToNextStep({ email });
+        } else {
+          // Exibir erro
+          emailError.textContent = result.error || 'Email não corresponde ao cadastrado.';
+          emailError.classList.remove('hidden');
+        }
+      } catch (error) {
+        console.error('Erro ao verificar email:', error);
+        emailError.textContent = 'Ocorreu um erro ao verificar o email. Tente novamente.';
+        emailError.classList.remove('hidden');
+      }
+    });
+  });
+</script>

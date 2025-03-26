@@ -1,0 +1,206 @@
+---
+const { clientId, formId, token } = Astro.props;
+---
+
+<div class="dados-cadastrais-step">
+  <h2 class="text-2xl font-bold mb-6">Atualização de Dados Cadastrais</h2>
+  
+  <p class="mb-4">
+    Por favor, verifique e atualize seus dados cadastrais abaixo.
+  </p>
+  
+  <form id="dados-cadastrais-form" class="space-y-4">
+    <input type="hidden" id="cliente-id" value={clientId} />
+    <input type="hidden" id="cliente-email" name="email" />
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="form-group">
+        <label for="nome" class="block text-sm font-medium text-gray-700 mb-1">
+          Nome Completo
+        </label>
+        <input 
+          type="text" 
+          id="nome" 
+          name="nome"
+          required
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+      
+      <div class="form-group">
+        <label for="telefone" class="block text-sm font-medium text-gray-700 mb-1">
+          Telefone
+        </label>
+        <input 
+          type="tel" 
+          id="telefone" 
+          name="telefone"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          placeholder="(00) 00000-0000"
+        />
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="endereco" class="block text-sm font-medium text-gray-700 mb-1">
+        Endereço
+      </label>
+      <input 
+        type="text" 
+        id="endereco" 
+        name="endereco"
+        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+      />
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="form-group">
+        <label for="cidade" class="block text-sm font-medium text-gray-700 mb-1">
+          Cidade
+        </label>
+        <input 
+          type="text" 
+          id="cidade" 
+          name="cidade"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+      
+      <div class="form-group">
+        <label for="estado" class="block text-sm font-medium text-gray-700 mb-1">
+          Estado
+        </label>
+        <input 
+          type="text" 
+          id="estado" 
+          name="estado"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+      
+      <div class="form-group">
+        <label for="cep" class="block text-sm font-medium text-gray-700 mb-1">
+          CEP
+        </label>
+        <input 
+          type="text" 
+          id="cep" 
+          name="cep"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          placeholder="00000-000"
+        />
+      </div>
+    </div>
+    
+    <div id="dados-error" class="hidden text-red-600 text-sm"></div>
+    
+    <div class="flex justify-between">
+      <button 
+        type="button"
+        id="btn-voltar"
+        class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      >
+        Voltar
+      </button>
+      
+      <button 
+        type="submit"
+        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      >
+        Continuar
+      </button>
+    </div>
+  </form>
+</div>
+
+<script define:vars={{ clientId }}>
+  document.addEventListener('DOMContentLoaded', () => {
+    const dadosForm = document.getElementById('dados-cadastrais-form');
+    const btnVoltar = document.getElementById('btn-voltar');
+    const dadosError = document.getElementById('dados-error');
+    const clienteEmailInput = document.getElementById('cliente-email');
+    
+    // Carregar dados do cliente quando o email for verificado
+    window.loadClientData = async function(email) {
+      if (!email) return;
+      
+      // Armazenar o email no campo oculto
+      clienteEmailInput.value = email;
+      
+      try {
+        // Importante: Enviar clientId e email como cabeçalhos para o Supabase
+        const response = await fetch('/api/cliente', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-cliente-id': clientId,
+            'x-client-email': email
+          }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+          // Preencher o formulário com os dados do cliente
+          const cliente = result.data;
+          
+          if (cliente.nome) document.getElementById('nome').value = cliente.nome;
+          if (cliente.telefone) document.getElementById('telefone').value = cliente.telefone;
+          if (cliente.endereco) document.getElementById('endereco').value = cliente.endereco;
+          if (cliente.cidade) document.getElementById('cidade').value = cliente.cidade;
+          if (cliente.estado) document.getElementById('estado').value = cliente.estado;
+          if (cliente.cep) document.getElementById('cep').value = cliente.cep;
+        } else {
+          dadosError.textContent = result.error || 'Erro ao carregar dados do cliente.';
+          dadosError.classList.remove('hidden');
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados do cliente:', error);
+        dadosError.textContent = 'Ocorreu um erro ao carregar seus dados. Tente novamente.';
+        dadosError.classList.remove('hidden');
+      }
+    };
+    
+    // Botão voltar
+    btnVoltar.addEventListener('click', () => {
+      window.goToPreviousStep();
+    });
+    
+    // Enviar formulário
+    dadosForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(dadosForm);
+      const clienteData = Object.fromEntries(formData.entries());
+      const email = clienteData.email;
+      
+      try {
+        // Importante: Enviar clientId e email como cabeçalhos para o Supabase
+        const response = await fetch('/api/atualizar-cliente', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-cliente-id': clientId,
+            'x-client-email': email
+          },
+          body: JSON.stringify(clienteData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // Dados atualizados com sucesso, avançar para a próxima etapa
+          window.goToNextStep(clienteData);
+        } else {
+          // Exibir erro
+          dadosError.textContent = result.error || 'Erro ao atualizar dados.';
+          dadosError.classList.remove('hidden');
+        }
+      } catch (error) {
+        console.error('Erro ao atualizar dados do cliente:', error);
+        dadosError.textContent = 'Ocorreu um erro ao salvar os dados. Tente novamente.';
+        dadosError.classList.remove('hidden');
+      }
+    });
+  });
+</script>

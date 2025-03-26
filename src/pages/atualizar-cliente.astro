@@ -1,0 +1,67 @@
+---
+import Layout from '../layout/BaseClinica.astro';
+import { buscarDadosCliente } from '../utils/clienteApi.js';
+
+// Obter parâmetros necessários
+const clienteId = Astro.url.searchParams.get('id');
+const clienteEmail = Astro.url.searchParams.get('email');
+
+let cliente = null;
+let error = null;
+
+if (clienteId && clienteEmail) {
+  const resultado = await buscarDadosCliente(clienteId, clienteEmail);
+  
+  if (resultado.error) {
+    error = resultado.error;
+  } else {
+    cliente = resultado.data;
+  }
+}
+---
+
+<Layout title="Atualizar Dados do Cliente">
+  <div>
+    {error && <p class="error">{error}</p>}
+    
+    {cliente && (
+      <form id="form-cliente">
+        <input type="hidden" name="clienteId" value={cliente.id} />
+        <input type="hidden" name="clienteEmail" value={cliente.email} />
+        
+        <div class="form-group">
+          <label for="nome">Nome</label>
+          <input type="text" id="nome" name="nome" value={cliente.nome} />
+        </div>
+        
+        <div class="form-group">
+          <label for="telefone">Telefone</label>
+          <input type="tel" id="telefone" name="telefone" value={cliente.telefone} />
+        </div>
+        
+        <!-- Outros campos do formulário -->
+        
+        <button type="submit">Atualizar</button>
+      </form>
+      
+      <script>
+        // Script para enviar o formulário via AJAX
+        document.getElementById('form-cliente').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const form = e.target;
+          const formData = new FormData(form);
+          const clienteId = formData.get('clienteId');
+          const clienteEmail = formData.get('clienteEmail');
+          
+          // Aqui você pode implementar a lógica para atualizar os dados
+          // usando os mesmos cabeçalhos para satisfazer a política
+        });
+      </script>
+    )}
+    
+    {!cliente && !error && (
+      <p>Carregando dados do cliente...</p>
+    )}
+  </div>
+</Layout>

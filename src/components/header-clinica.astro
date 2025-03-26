@@ -1,41 +1,106 @@
 ---
+import { createClient } from '@supabase/supabase-js';
 
-import { supabase } from "../lib/supabase";
+// Obter o slug da URL
+const { pathname } = Astro.url;
+const slugMatch = pathname.match(/\/([^\/]+)/);
+const slug = slugMatch ? slugMatch[1] : null;
 
-const { slug } = Astro.params as { slug: string };
-console.log("Slug da clínica (Header):", slug);
+let clinica = null;
+let error = null;
 
+if (slug) {
+  try {
+    const supabase = createClient(
+      import.meta.env.PUBLIC_SUPABASE_URL,
+      import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+    );
 
-// Consulta para obter os dados da clínica na tabela public.clinica
-const { data: clinic, error } = await supabase
-  .from("clinica")
-  .select("id, slug, nome, descricao, created_at")
-  .eq("slug", slug)
-  .single();
+    // Usar maybeSingle() em vez de single() para evitar erro quando não encontrar resultados
+    const { data, error: clinicaError } = await supabase
+      .from('clinica')
+      .select('id, slug, nome, descricao, created_at')
+      .eq('slug', slug)
+      .maybeSingle();
 
-if (error) {
-  console.error("Erro ao buscar a clínica:", error);
+    if (clinicaError) {
+      console.error('Erro ao buscar a clínica:', clinicaError);
+      error = 'Erro ao carregar informações da clínica.';
+    } else if (!data) {
+      console.log('Clínica não encontrada para o slug:', slug);
+      error = 'Clínica não encontrada.';
+    } else {
+      clinica = data;
+    }
+  } catch (err) {
+    console.error('Erro ao processar dados da clínica:', err);
+    error = 'Ocorreu um erro ao carregar a página.';
+  }
 }
-
-const clinica_id = clinic ? clinic.id : null;
-console.log("ID da clínica (Header):", clinica_id);
-console.log("Nome da clínica (Header):", clinic.nome);
-
 ---
 
-<header class="sticky top-0 z-50 w-full bg-background/95 supports-[backdrop-filter]:bg-background/60 border-b backdrop-blur">
-  <nav class="flex items-center justify-between px-4 py-3 bg-white dark:bg-zinc-800 dark:border-zinc-700">
-    <!-- Logo -->
-    <a href={`/${slug}/`}>{clinic?.nome}</a>
-    <!-- Links -->
-    <ul class="flex items-center gap-8 font-medium">
-      <li>
-        <a href={`/${slug}/formulario`} class="text-zinc-900 dark:text-gray-200">
-          Formulario
-        </a>
-      </li>
- 
-     
-    </ul>
-  </nav>
+<header class="bg-white shadow-sm">
+  <div class="container mx-auto px-4 py-4">
+    {error ? (
+      <div class="text-red-600">{error}</div>
+    ) : clinica ? (
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          {clinica.logo_url ? (
+            <img 
+              src={clinica.logo_url} 
+              alt={`Logo ${clinica.nome}`} 
+              class="h-10 w-auto"
+            />
+          ) : (
+            <div class="text-xl font-bold text-gray-800">{clinica.nome}</div>
+          )}
+        </div>
+        
+        <nav class="hidden md:flex space-x-6">
+          <a href={`/${slug}`} class="text-gray-600 hover:text-gray-900">Início</a>
+          <a href={`/${slug}/sobre`} class="text-gray-600 hover:text-gray-900">Sobre</a>
+          <a href={`/${slug}/contato`} class="text-gray-600 hover:text-gray-900">Contato</a>
+        </nav>
+        
+        <div class="md:hidden">
+          <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-900">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    ) : (
+      <div class="animate-pulse flex items-center justify-between">
+        <div class="h-10 w-32 bg-gray-200 rounded"></div>
+        <div class="hidden md:flex space-x-6">
+          <div class="h-4 w-16 bg-gray-200 rounded"></div>
+          <div class="h-4 w-16 bg-gray-200 rounded"></div>
+          <div class="h-4 w-16 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    )}
+  </div>
+  
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="hidden md:hidden">
+    <div class="px-2 pt-2 pb-3 space-y-1">
+      <a href={`/${slug}`} class="block px-3 py-2 text-gray-600 hover:text-gray-900">Início</a>
+      <a href={`/${slug}/sobre`} class="block px-3 py-2 text-gray-600 hover:text-gray-900">Sobre</a>
+      <a href={`/${slug}/contato`} class="block px-3 py-2 text-gray-600 hover:text-gray-900">Contato</a>
+    </div>
+  </div>
 </header>
+
+<script>
+  // Toggle mobile menu
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  
+  if (mobileMenuButton && mobileMenu) {
+    mobileMenuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  }
+</script>

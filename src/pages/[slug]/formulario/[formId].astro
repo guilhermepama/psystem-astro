@@ -1,0 +1,93 @@
+---
+import Layout from '../../../layout/BaseClinica.astro';
+import { createClient } from '@supabase/supabase-js';
+import VerificacaoEmail from '../../../components/formularios/VerificacaoEmail.astro';
+
+// Parâmetros para teste
+const { slug, formId } = Astro.params;
+const token = Astro.url.searchParams.get('token');
+
+let resultado = null;
+let erro = null;
+let clienteId = null;
+
+if (formId && token) {
+  try {
+    // Criar cliente Supabase com os cabeçalhos necessários
+    const supabase = createClient(
+      import.meta.env.PUBLIC_SUPABASE_URL,
+      import.meta.env.PUBLIC_SUPABASE_ANON_KEY,
+      {
+        global: {
+          headers: {
+            'x-formid': formId,
+            'x-public-token': token
+          }
+        }
+      }
+    );
+
+
+    console.log("Buscando histórico clínico...");
+
+    // Tentar buscar o histórico clínico
+    const { data, error } = await supabase
+      .from('historico_clinico')
+      .select('cliente_id')
+      .single();
+
+    if (error) {
+      erro = error;
+      console.error('Erro ao buscar histórico clínico:', error);
+    } else {
+      resultado = data;
+      clienteId = data.cliente_id;
+      console.log('ID Cliente:', clienteId);
+
+      // Não tente buscar dados do cliente aqui
+      // Isso será feito após a verificação do email
+    }
+  } catch (err) {
+    erro = err;
+    console.error('Erro inesperado:', err);
+  }
+}
+      
+---
+
+<Layout title='Formulário de Atualização'>
+  <div class="container mx-auto px-4 py-8">
+
+    {erro && (
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <p>Erro: {JSON.stringify(erro)}</p>
+      </div>
+    )}
+    
+
+
+
+    {clienteId && (
+      <div>
+        <h1 class="text-2xl font-bold mb-6">Atualização de Cadastro</h1>
+        <p class="mb-4 text-gray-600">
+          Para prosseguir com a atualização dos seus dados, por favor, confirme seu email.
+        </p>
+        
+        <VerificacaoEmail 
+          clienteId={clienteId} 
+        />
+      </div>
+    )}
+    
+
+
+
+    {!erro && !clienteId && (
+      <div class="text-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p>Carregando formulário...</p>
+      </div>
+    )}
+  </div>
+</Layout>

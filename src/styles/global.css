@@ -1,0 +1,54 @@
+/* global.css */
+
+/* Importa as diretivas do Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Sobrescreve os estilos base para melhorar o contraste */
+@layer base {
+  body {
+    color: #333; /* Texto mais escuro para melhor legibilidade */
+    background-color: #fff;
+  }
+
+  /* Estilos para inputs, textareas, selects e botões */
+  input {
+    color: #333;
+    background-color: #412f81;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    font-size: 1rem;
+  },
+  textarea {
+    color: #333;
+    background-color: #412f81;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    font-size: 1rem;
+  },
+  select {
+    color: #333;
+    background-color: #412f81;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    font-size: 1rem;
+  },
+  button {
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    font-size: 1rem;
+  }
+
+  /* Estilos de foco para acessibilidade */
+  input:focus,
+  textarea:focus,
+  select:focus,
+  button:focus {
+    outline: none;
+    border-color: #007BFF;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  }
+}
